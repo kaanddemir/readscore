@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReadScore</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-text">ReadScore</span>
+        <span class="version-badge" id="app-version">1.0.0</span>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn hidden" id="header-selection-btn" title="Analyze selected text">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 7V4h16v3" />
+            <path d="M9 20h6" />
+            <path d="M12 4v16" />
+          </svg>
+        </button>
+        <button class="header-btn" id="help-btn" title="How it works">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Help Modal Overlay -->
+    <div id="help-overlay" class="help-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <div class="help-modal">
+        <div class="help-header">
+          <span class="help-title" id="help-title">How It Works</span>
+          <button class="help-close" id="help-close" aria-label="Close help modal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div class="help-list">
+          <!-- Readability Score -->
+          <div class="help-accordion-item">
+            <button class="help-accordion-header">
+              <div class="help-icon-wrapper">
+                <div class="help-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                  </svg>
+                </div>
+                <span class="help-label">Readability Score</span>
+              </div>
+              <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="help-accordion-content">
+              <p>Based on Flesch-Kincaid Grade Level. Indicates the education level required to understand the text.</p>
+            </div>
+          </div>
+
+          <!-- Reading Time -->
+          <div class="help-accordion-item">
+            <button class="help-accordion-header">
+              <div class="help-icon-wrapper">
+                <div class="help-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
+                <span class="help-label">Reading Time</span>
+              </div>
+              <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="help-accordion-content">
+              <p>Estimated time to read the full text, calculated at an average speed of 250 words per minute.</p>
+            </div>
+          </div>
+
+          <!-- Words Per Sentence -->
+          <div class="help-accordion-item">
+            <button class="help-accordion-header">
+              <div class="help-icon-wrapper">
+                <div class="help-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <span class="help-label">Words Per Sentence</span>
+              </div>
+              <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="help-accordion-content">
+              <p>The average number of words in each sentence. Lower numbers generally indicate easier readability.</p>
+            </div>
+          </div>
+
+          <!-- Total Words -->
+          <div class="help-accordion-item">
+            <button class="help-accordion-header">
+              <div class="help-icon-wrapper">
+                <div class="help-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
+                </div>
+                <span class="help-label">Total Words</span>
+              </div>
+              <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="help-accordion-content">
+              <p>The total count of words found in the main content of the page.</p>
+            </div>
+          </div>
+
+          <!-- Complex Sentences -->
+          <div class="help-accordion-item help-item-red">
+            <button class="help-accordion-header">
+              <div class="help-icon-wrapper">
+                <div class="help-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                      d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </div>
+                <span class="help-label">Complex Sentences</span>
+              </div>
+              <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="help-accordion-content">
+              <p>Highlights sentences with more than 4 clauses. These can be hard to follow and should typically be
+                split.</p>
+            </div>
+          </div>
+
+          <!-- Dense Paragraphs -->
+          <div class="help-accordion-item help-item-amber">
+            <button class="help-accordion-header">
+              <div class="help-icon-wrapper">
+                <div class="help-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" />
+                    <line x1="3" y1="15" x2="21" y2="15" />
+                  </svg>
+                </div>
+                <span class="help-label">Dense Paragraphs</span>
+              </div>
+              <svg class="help-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="help-accordion-content">
+              <p>Highlights paragraphs exceeding 100 words. Large blocks of text can be visually overwhelming.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Initial State - Start Button -->
+    <!-- Initial State - Start Button -->
+    <div id="initial" class="initial-state">
+      <div class="hero-section">
+        <div class="hero-visual">
+          <div class="hero-icon-ring">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <line x1="10" y1="9" x2="8" y2="9" />
+            </svg>
+          </div>
+          <div class="hero-glow"></div>
+        </div>
+
+        <div class="hero-content">
+          <h2 class="hero-title">Analyze Content</h2>
+          <p class="hero-subtitle">Get instant readability scores and insights for the current page.</p>
+        </div>
+      </div>
+
+      <div class="action-stack">
+        <button id="start-btn" class="premium-btn primary">
+          <div class="btn-content">
+            <span class="btn-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+            </span>
+            <div class="btn-text-group">
+              <span class="btn-label">Analyze Full Page</span>
+              <span class="btn-sublabel">Scan entire document</span>
+            </div>
+          </div>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+
+        <button id="selection-btn" class="premium-btn secondary">
+          <div class="btn-content">
+            <span class="btn-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 7V4h16v3" />
+                <path d="M9 20h6" />
+                <path d="M12 4v16" />
+              </svg>
+            </span>
+            <div class="btn-text-group">
+              <span class="btn-label">Analyze Selection</span>
+              <span class="btn-sublabel">Scan highlighted text</span>
+            </div>
+          </div>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Unsupported/System Page State -->
+    <div id="unsupported" class="initial-state hidden">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+        <div class="hero-section">
+          <div class="hero-visual">
+            <div class="hero-icon-ring" style="box-shadow: none; border: 1px solid var(--bg-tertiary);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" style="color: var(--text-muted);">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="hero-content">
+            <h2 class="hero-title"
+              style="font-size: 18px; margin-bottom: 8px; background: none; -webkit-text-fill-color: initial; color: var(--text-primary);">
+              Restricted Page</h2>
+            <p class="hero-subtitle" style="font-size: 13px;">Chrome protects system pages and the Web Store from
+              extensions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>Analyzing page...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="error hidden">
+      <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <p id="error-message">Unable to analyze this page</p>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="results hidden">
+      <div class="metrics-container">
+        <!-- Header -->
+        <div class="metrics-header">
+          <span class="metrics-title">General Analysis</span>
+        </div>
+        <!-- Low Confidence Warning (shown for very short texts) -->
+        <div id="low-confidence-warning" class="low-confidence-warning hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>Short text: results may be less accurate</span>
+        </div>
+        <!-- Readability Score (formerly Badge) -->
+        <div id="badge" class="metric-card">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">
+              <span id="badge-level">Medium</span>
+              <span class="quality-label" id="grade-label">Grade 0</span>
+            </span>
+            <span class="metric-label">Readability Score</span>
+          </div>
+        </div>
+
+        <!-- Reading Time -->
+        <div class="metric-card">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value" id="reading-time">3 mins</span>
+            <span class="metric-label">Reading Time</span>
+          </div>
+        </div>
+
+        <!-- Words Per Sentence -->
+        <div class="metric-card" id="sentence-card">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">
+              <span id="avg-sentence">15.2</span>
+              <span class="quality-label" id="sentence-quality">Optimal</span>
+            </span>
+            <span class="metric-label">Words/Sentence</span>
+          </div>
+        </div>
+
+        <!-- Total Words -->
+        <div class="metric-card" id="wordcount-card">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+          </div>
+          <div class="metric-content">
+            <span class="metric-value">
+              <span id="word-count">450</span>
+              <span class="quality-label" id="wordcount-category">Medium</span>
+            </span>
+            <span class="metric-label">Total Words</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Issues Section -->
+      <div class="issues-section">
+        <!-- Header with toggle -->
+        <div class="issues-header">
+          <div class="issues-title">
+            <span>Highlights</span>
+          </div>
+          <div class="issues-controls">
+            <button class="icon-btn hidden" id="load-more-btn" title="Load more highlights">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+            <label class="toggle" title="Toggle highlighting">
+              <input type="checkbox" id="highlight-toggle" aria-label="Toggle text highlighting on page">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Issue Summary -->
+        <div class="issues-summary" id="issues-summary">
+          <div class="issue-badge issue-badge-red" id="complex-sentences-badge">
+            <span class="issue-badge-count" id="complex-sentences-count">0</span>
+            <span class="issue-badge-label">Complex Sentences</span>
+            <span class="issue-badge-criteria">> 4 clauses</span>
+          </div>
+          <div class="issue-badge issue-badge-yellow" id="dense-paragraphs-badge">
+            <span class="issue-badge-count" id="dense-paragraphs-count">0</span>
+            <span class="issue-badge-label">Dense Paragraphs</span>
+            <span class="issue-badge-criteria">> 100 words</span>
+          </div>
+        </div>
+
+        <!-- Success State (shown when no issues) -->
+        <div class="issues-success hidden" id="issues-success">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <span>Great job! No issues found</span>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script src="../src/analyzer.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>
