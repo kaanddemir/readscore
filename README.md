@@ -1,82 +1,58 @@
 # ReadScore
 
-A privacy-first Chrome Extension that analyzes the readability of English web pages using transparent, explainable rules—no AI models or external APIs.
+A Chrome Extension that analyzes the readability of English web pages using transparent, explainable rules—no AI models or external APIs.
 
-![ReadScore Banner](icons/icon128.png)
+![ReadScore Icon](icons/icon128.png)
+
+## Overview
+
+ReadScore helps you assess the complexity of any web page instantly. It calculates readability scores locally in your browser, ensuring completely private analysis without sending data to external servers.
 
 ## Features
 
-### Core Metrics
-- **Readability Level**: Easy / Medium / Hard classification (using Flesch-Kincaid Grade Level)
-- **Estimated Reading Time**: Research-backed speed (250 WPM average adult reading speed)
-- **Average Sentence Length**: Words per sentence with quality rating
-- **Total Words**: Word count with category classification
+### Core Analysis
+- **Readability Level**: Classifies content as Easy, Medium, or Hard based on the Flesch-Kincaid Grade Level.
+- **Estimated Reading Time**: Calculates reading time based on an average speed of 250 WPM.
+- **Text Statistics**: Provides word count, sentence count, and average sentence length.
 
 ### Visual Highlighting
-When highlighting is enabled:
-- **Complex sentences** (>4 clauses) — Red left border
-- **Dense paragraphs** (>100 words) — Amber left border
+Toggle visual aids to identifying structural issues directly on the page:
+- **Complex Sentences**: Red left border for sentences with excessive clauses (>4).
+- **Dense Paragraphs**: Amber left border for long, dense blocks of text (>100 words).
 
-## How It Works
-
-ReadScore uses transparent, research-backed analysis:
-
-### Flesch-Kincaid Grade Level
-```
-Grade = 0.39 × (words/sentences) + 11.8 × (syllables/words) − 15.59
-```
-
-| FK Grade | Level | Audience |
-|----------|-------|----------|
-| 0-6 | Easy | Basic |
-| 7-12 | Medium | Average |
-| 13+ | Hard | Advanced |
-
-> **Note on Reliability:** For texts shorter than 100 words, ReadScore automatically defaults to a confidence-adjusted rating to avoid misleading extreme scores due to insufficient data.
-
-### Reading Speed (Research-Backed)
-| Content | Words Per Minute |
-|---------|------------------|
-| Easy | 275 WPM |
-| Medium | 250 WPM (adult average) |
-| Hard | 200 WPM |
-
-## Privacy First
-
-- All analysis runs **locally in your browser**
-- **No data collection** or tracking
-- **No external API calls**
-- **No AI models** — just simple, explainable rules
-- Only activates when you click the extension icon
+### Privacy Focused
+- **Local Processing**: All calculations run inside your browser.
+- **No Data Collection**: We do not track websites visited or collect user data.
+- **No External Calls**: The extension works entirely offline after installation.
+- See [PRIVACY_POLICY.md](PRIVACY_POLICY.md) for the full privacy policy.
 
 ## Installation
 
-### From Chrome Web Store
-*(Coming Soon)*
-
 ### Manual Installation (Developer Mode)
-1. Download or clone this repository
-2. Open Chrome and navigate to `chrome://extensions`
-3. Enable **Developer mode** (toggle in top right)
-4. Click **Load unpacked**
-5. Select the `ReadScore` folder
+1. Download or clone this repository.
+2. Open Chrome and go to `chrome://extensions/`.
+3. Enable **Developer mode** (top right toggle).
+4. Click **Load unpacked**.
+5. Select the `ReadScore` folder.
 
 ## Usage
 
-1. Navigate to any web page with English text
-2. Click the ReadScore icon in your browser toolbar
-3. View your readability metrics instantly
-4. Toggle "Show readability issues" to highlight problems on the page
+1. Navigate to any article or blog post.
+2. Click the **ReadScore** icon in your browser toolbar to open the popup.
+3. Review the readability score and stats.
+4. Toggle "Show readability issues" to see complex areas highlighted on the page.
 
 ## Project Structure
 
-```
+```text
 ReadScore/
+
 ├── manifest.json          # Extension configuration
-├── PRIVACY_POLICY.md    # Privacy Policy
-├── README.md              # This file
+├── PRIVACY_POLICY.md      # Privacy Policy
+├── README.md              # Project documentation
 ├── icons/                 # Extension icons
 │   ├── icon16.png
+│   ├── icon32.png
 │   ├── icon48.png
 │   └── icon128.png
 ├── popup/                 # Popup UI
@@ -91,26 +67,20 @@ ReadScore/
 
 ## Technical Details
 
-### Syllable Counting
-Uses a vowel-pattern algorithm to estimate syllables:
-- Counts groups of vowels (a, e, i, o, u, y)
-- Accounts for silent 'e' endings
-- Handles common exceptions
+ReadScore based its analysis on well-established readability formulas:
 
-### Content Extraction
-Intelligently extracts readable content:
-- Prioritizes `<article>`, `<main>`, and content areas
-- Excludes navigation, sidebars, and code blocks
-- Analyzes paragraphs, headings, and list items
+**Flesch-Kincaid Grade Level**:
+```
+0.39 * (words/sentences) + 11.8 * (syllables/words) - 15.59
+```
+
+**Syllable Counting**:
+Uses a heuristic vowel-pattern algorithm to estimate syllable counts, accounting for silent 'e's and common exceptions.
 
 ## License
 
-MIT License - feel free to use, modify, and distribute.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-## Contributing
+## Contact
 
-Contributions are welcome! Please feel free to submit issues and pull requests.
-
----
-
-**ReadScore** — *See how readable your web is*
+Created by [HeyKaan.dev](https://heykaan.dev).
