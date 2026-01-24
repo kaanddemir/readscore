@@ -308,6 +308,16 @@ async function scrollToIssue(type, index) {
  */
 async function injectContentScript(tabId) {
     try {
+        // Check if script is already running
+        try {
+            const status = await chrome.tabs.sendMessage(tabId, { action: 'getStatus' });
+            if (status) {
+                return true; // Already running
+            }
+        } catch (e) {
+            // Script not running, proceed with injection
+        }
+
         // Inject the analyzer first, then content script
         await chrome.scripting.executeScript({
             target: { tabId: tabId },
@@ -327,6 +337,7 @@ async function injectContentScript(tabId) {
         return true;
     } catch (error) {
         // Failed to inject content script
+        console.error('Injection failed:', error);
         return false;
     }
 }

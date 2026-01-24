@@ -5,8 +5,9 @@
  * 
  * Optimized for accuracy with research-backed thresholds and algorithms.
  */
+'use strict';
 
-var ReadScoreAnalyzer = {
+const ReadScoreAnalyzer = {
   // Reading speed - using consistent 250 WPM (standard adult average)
   // Research shows adults read 200-300 WPM, 250 is a good middle ground
   READING_SPEEDS: {
@@ -656,4 +657,6 @@ var ReadScoreAnalyzer = {
 // Export for use in content script
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = ReadScoreAnalyzer;
+} else if (typeof window !== 'undefined') {
+  window.ReadScoreAnalyzer = ReadScoreAnalyzer;
 }

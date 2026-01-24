@@ -2,14 +2,15 @@
  * ReadScore - Content Script
  * Extracts page content, runs analysis, and applies highlighting.
  */
+'use strict';
 
 if (!window.readScoreInitialized) {
     window.readScoreInitialized = true;
 
     // State management
-    var isHighlightingEnabled = false;
-    var analysisResults = null;
-    var originalHTML = new Map(); // Store original HTML for restoration
+    let isHighlightingEnabled = false;
+    let analysisResults = null;
+    let originalHTML = new Map(); // Store original HTML for restoration
 
     // Batched highlighting state
     const HIGHLIGHT_BATCH_SIZE = 50;
@@ -61,7 +62,8 @@ if (!window.readScoreInitialized) {
             'script', 'style', 'noscript', 'iframe', 'svg',
             'nav', 'header', 'footer', 'aside',
             '.sidebar', '.menu', '.navigation', '.comments',
-            'code', 'pre', '.code', '.highlight'
+            'code', 'pre', '.code', '.highlight',
+            '[contenteditable="true"]', 'textarea', 'input'
         ];
 
         // Get all text-bearing elements
