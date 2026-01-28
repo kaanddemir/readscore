@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ReadScore",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Analyze the readability of web pages with transparent, explainable metrics.",
   "author": "HeyKaan.dev",
   "homepage_url": "https://heykaan.dev",
