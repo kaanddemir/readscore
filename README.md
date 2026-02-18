@@ -20,8 +20,6 @@ Unlike other tools that rely on opaque AI models, ReadScore uses **transparent, 
   - **Dense Paragraphs**: Large blocks of text that can cause visual fatigue.
 - **Privacy-First Architecture**: All processing happens locally on your machine. No data is sent to the cloud.
 - **Transparent Metrics**: Understand exactly *why* a score was given based on visible rules.
-- **Multi-Language Support**: Fully localized interface (Turkish and English).
-- **Dark Mode Compatible**: Designed to look great in both light and dark browser themes.
 
 ## How It Works
 
