@@ -1,0 +1,52 @@
+/**
+ * ReadScore - Highlighting Styles
+ * Styles for highlighting readability issues on web pages.
+ */
+
+/* Complex sentences - Red left border (applied to paragraph containing complex sentence) */
+.readscore-complex-sentence {
+  background: rgba(239, 68, 68, 0.08);
+  border-left: 4px solid #ef4444;
+  padding-left: 12px !important;
+  margin-left: -16px !important;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Dense paragraphs - Yellow background */
+.readscore-dense-paragraph {
+  background: linear-gradient(to right, rgba(180, 83, 9, 0.08), rgba(180, 83, 9, 0.12), rgba(180, 83, 9, 0.08));
+  border-left: 4px solid #b45309;
+  /* Amber */
+  padding-left: 12px !important;
+  margin-left: -16px !important;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Both issues present - Gradient Border */
+/* Both issues present - Left border split vertically (Top: Amber, Bottom: Red) */
+.readscore-complex-sentence.readscore-dense-paragraph {
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 4px solid;
+  border-image: linear-gradient(to bottom, #b45309 50%, #ef4444 50%) 1;
+  /* Fallback */
+  border-left-color: #ef4444;
+  box-shadow: none;
+  padding-left: 12px !important;
+  margin-left: -16px !important;
+}
+
+/* Animation for newly applied highlights */
+@keyframes readscore-highlight-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.readscore-complex-sentence,
+.readscore-dense-paragraph {
+  animation: readscore-highlight-fade-in 0.3s ease-out;
+}
