@@ -4,7 +4,9 @@
   <img src="icons/icon128.png" alt="ReadScore Logo" width="128" height="128">
 </div>
 
-### Analyze readability, generate AI summaries, and use focused reading tools.
+<p align="center">
+  Analyze the readability of web pages with transparent, explainable metrics.
+</p>
 
 ## Overview
 
@@ -14,6 +16,13 @@ The extension is designed to stay explainable:
 - Readability analysis is rule-based and runs locally in the browser.
 - Reader tools work directly on the page without sending your content to a remote backend.
 - AI Summary uses Chrome's built-in summarizer support when your browser provides it.
+
+## New in v1.1.1
+
+- Improved AI Summary input preparation and summary panel behavior
+- Refined Focus Mode transitions, responsive controls, and reader layout
+- Polished Tracking Assist behavior and on-page animations
+- Updated popup UI, versioning, and project documentation
 
 ## Features
 
@@ -112,10 +121,10 @@ ReadScore/
 
 ## Roadmap
 
-- Saved reader presets for Focus Mode
-- Better section-aware extraction for complex layouts
-- Copy or export AI summaries
-- Firefox and Edge support evaluation
+- Focus Mode Improvements: Strengthen content extraction and cleaner reader rendering on complex pages.
+- AI Summary Refinements: Improve summary input quality, status messaging, and long-page handling.
+- Analysis Enhancements: Continue refining readability edge cases such as short text and sentence parsing.
+- Firefox Support: Evaluate a Firefox Add-ons version after the Chrome experience is fully stabilized.
 
 ## Contributing
 
