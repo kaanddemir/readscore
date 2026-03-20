@@ -4,96 +4,132 @@
   <img src="icons/icon128.png" alt="ReadScore Logo" width="128" height="128">
 </div>
 
-### Analyze the readability of web pages with transparent, explainable metrics.
+### Analyze readability, generate AI summaries, and use focused reading tools.
 
 ## Overview
 
-**ReadScore** is a privacy-first Chrome extension designed to help you understand and improve the readability of any web page. Whether you are a writer looking to refine your content, a student analyzing complex texts, or a developer testing accessibility, ReadScore provides instant, actionable feedback.
+**ReadScore** is a privacy-first Chrome extension for understanding and improving how readable a page feels. It combines transparent readability metrics, a local reader overlay, and Chrome's built-in AI summarization when available.
 
-Unlike other tools that rely on opaque AI models, ReadScore uses **transparent, rule-based algorithms** to calculate readability scores. It operates entirely within your browser, ensuring that your reading data never leaves your device.
+The extension is designed to stay explainable:
+- Readability analysis is rule-based and runs locally in the browser.
+- Reader tools work directly on the page without sending your content to a remote backend.
+- AI Summary uses Chrome's built-in summarizer support when your browser provides it.
 
 ## Features
 
-- **Instant Readability Analysis**: Get immediate scores on reading ease, grade level, and more.
-- **Visual Highlighting**: Automatically identifies and highlights:
-  - **Complex Sentences**: Long, convoluted structures that may confuse readers.
-  - **Dense Paragraphs**: Large blocks of text that can cause visual fatigue.
-- **Privacy-First Architecture**: All processing happens locally on your machine. No data is sent to the cloud.
-- **Transparent Metrics**: Understand exactly *why* a score was given based on visible rules.
+- **General Analysis**
+  - Readability Score
+  - Words per Sentence
+  - Total Words
+- **Selection Analysis**
+  - Analyze only the text you selected on the page
+  - Short selections are blocked with a clear warning
+- **AI Summary**
+  - Generates a page summary in a draggable on-page panel
+  - Supports different summary types and lengths
+  - Uses Chrome's built-in AI summarizer when available
+- **Reading Tools**
+  - Focus Mode
+  - Tracking Assist
+  - Reading Guide
+- **Local Preferences**
+  - Stores reading tool toggle states locally
+  - Remembers AI Summary type and length settings
 
 ## How It Works
 
-1.  **Extraction**: When you activate ReadScore, it intelligently scans the active tab to identify the main content area (articles, blog posts, etc.), ignoring implementation details like navigation bars and ads.
-2.  **Analysis**: The extension runs text through standard readability formulas and custom heuristics to evaluate sentence length, word complexity, and structural density.
-3.  **Visualization**: Results are displayed in a clean popup. If you enable highlighting, ReadScore uses the DOM to overlay visual cues directly on the web page, guiding your attention to specific areas that may need improvement.
+1. **Content Extraction**  
+   ReadScore identifies readable page content from the active tab and filters out noise such as navigation, banners, and sidebars.
 
-## Use Cases
+2. **Readability Analysis**  
+   The extension calculates explainable metrics such as readability level, sentence length, and total word count using local JavaScript logic.
 
--   **Content Creators & Bloggers**: Ensure your articles are accessible and easy to digest for your target audience.
--   **Editors**: Quickly spot run-on sentences and overly dense sections during proofreading.
--   **Students & Researchers**: Gauge the complexity of source materials instantly.
--   **UX Writers**: Verify that interface copy meets readability standards.
+3. **Reader Tools**  
+   Focus Mode rebuilds a cleaner reading surface, Tracking Assist adjusts spacing, and Reading Guide adds a line-following aid.
+
+4. **AI Summary**  
+   If Chrome's summarizer is available, ReadScore prepares a cleaned summary input and renders the result in an on-page summary panel.
+
+## Requirements
+
+- Chrome or a Chromium-based browser with extension support
+- For **AI Summary**, Chrome's built-in summarizer must be available
+- The AI Summary help text currently targets **Chrome 138+**
+
+All non-AI features still work without summarizer support.
 
 ## Privacy
 
-ReadScore is built with a **Privacy-First** philosophy.
--   **No Remote Processing**: All text analysis is performed locally in your browser using JavaScript.
--   **No Tracking**: We do not collect your browsing history, personal data, or usage metrics.
--   **No External requests**: The extension never communicates with external servers.
+ReadScore is built to run locally.
 
-For more details, please see our [Privacy Policy](PRIVACY_POLICY.md).
+- Readability analysis runs in-browser
+- Reader tools run in-browser
+- Preferences are stored locally with `chrome.storage.local`
+- ReadScore does not operate a backend or send analyzed page content to external servers
 
-## Tech Stack
-
--   **Core**: HTML5, CSS3, Modern JavaScript (ES6+)
--   **Architecture**: Chrome Extension Manifest V3
--   **Analysis Engine**: Custom rule-based algorithms for text processing
--   **Localization**: Chrome i18n API
+For full details, see [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
 
 ## Installation
 
-### From Chrome Web Store
-[**Install ReadScore**](https://chromewebstore.google.com/detail/readscore/ocklmdaccbpakdjnkhckobkoochkajeg?authuser=0&hl=en)
+### Chrome Web Store
 
-### Manual Installation (Developer Mode)
-1.  Clone this repository.
-2.  Open Chrome and go to `chrome://extensions/`.
-3.  Enable **Developer mode** in the top right.
-4.  Click **Load unpacked**.
-5.  Select the directory where you cloned this repository.
+[Install ReadScore](https://chromewebstore.google.com/detail/readscore/ocklmdaccbpakdjnkhckobkoochkajeg?authuser=0&hl=en)
+
+### Manual Installation
+
+1. Clone this repository.
+2. Open `chrome://extensions/`.
+3. Enable **Developer mode**.
+4. Click **Load unpacked**.
+5. Select this project folder.
 
 ## Project Structure
 
 ```bash
 ReadScore/
-├── _locales/          # Localization files (En, Tr)
-├── icons/             # Extension application icons
-├── popup/             # Popup UI (HTML/CSS/JS)
-├── src/               # Core logic (Content scripts, Analyzer)
-├── manifest.json      # Extension configuration (Manifest V3)
-└── README.md          # Documentation
+├── icons/                  # Extension icons
+├── popup/
+│   ├── popup.html          # Popup markup
+│   ├── popup.css           # Popup styles
+│   └── popup.js            # Popup logic and Chrome messaging
+├── src/
+│   ├── analyzer.js         # Readability analysis logic
+│   ├── content.js          # Page extraction and AI summary panel logic
+│   ├── easyread.js         # Focus Mode, Tracking Assist, Reading Guide
+│   └── easyread-styles.css # Injected reading-tool styles
+├── manifest.json           # Extension manifest
+├── PRIVACY_POLICY.md       # Privacy policy
+└── README.md               # Project documentation
 ```
+
+## Permissions
+
+| Permission | Why it is needed |
+| :--- | :--- |
+| `activeTab` | Read the currently active page only when the user invokes the extension |
+| `scripting` | Inject content and reading-tool scripts into the active page |
+| `storage` | Save local preferences such as reading tool toggles and summary settings |
 
 ## Roadmap
 
--   [ ] **Export Reports**: Download analysis results as PDF or JSON.
--   [ ] **Custom Rules**: Allow users to adjust highlighting thresholds.
--   [ ] **History**: Optional local history of analyzed pages.
--   [ ] **Firefox Support**: Port the extension to Firefox Add-ons.
+- Saved reader presets for Focus Mode
+- Better section-aware extraction for complex layouts
+- Copy or export AI summaries
+- Firefox and Edge support evaluation
 
 ## Contributing
 
-Contributions are welcome! If you have ideas for improvements or new features:
+Contributions are welcome.
 
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push the branch.
+5. Open a pull request.
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for details.
 
 <br>
 

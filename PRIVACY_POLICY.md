@@ -1,79 +1,91 @@
 # Privacy Policy
 
-**Last Updated:** January 28, 2026
+**Last Updated:** March 21, 2026
 
 ## ReadScore Chrome Extension
 
 ## Overview
 
-**ReadScore** is a privacy-first Chrome extension that analyzes the readability of web pages. We are committed to protecting your privacy and ensuring transparency in how our software operates. This policy outlines how ReadScore handles your data—which is to say, it stays entirely on your device.
+ReadScore is a privacy-first Chrome extension for readability analysis, on-page reading tools, and AI-assisted summaries. The extension is designed to work locally inside your browser and does not run its own backend.
 
-## Data Collection
+## What We Collect
 
-**We do not collect any personal data.**
+**We do not collect personal data.**
 
-ReadScore operates entirely locally within your browser. 
--   We **do not** track your browsing history.
--   We **do not** collect IP addresses or device identifiers.
--   We **do not** capture the text content you analyze.
--   We **do not** use cookies or tracking pixels.
+ReadScore does not:
+- collect browsing history
+- collect page content on our servers
+- collect IP addresses or device identifiers
+- use analytics, tracking pixels, or cookies
 
-## Data Storage
+## What Is Processed Locally
 
-ReadScore stores a minimal amount of data **locally** on your device to remember your preferences:
+When you use the extension, the following actions happen locally in your browser:
 
--   **Highlighting Preference**: Stores whether you have the "Show Highlights" toggle turned on or off.
+- page text extraction for readability analysis
+- selected text extraction for selection analysis
+- Focus Mode content extraction for the reader overlay
+- AI Summary input preparation for supported browsers
 
-This data is stored using the `chrome.storage.local` API and never leaves your browser.
+These operations are performed in the active tab and are not sent to a ReadScore server because ReadScore does not operate one.
 
-## How It Works
+## AI Summary
 
-1.  **Local Analysis**: When you click the extension icon, ReadScore reads the text content of the *active tab*.
-2.  **Processing**: The text is analyzed using JavaScript algorithms running entirely within your browser context.
-3.  **Result Display**: Readability scores are calculated and displayed in the popup window.
-4.  **Ephemeral Data**: The text extracted for analysis is processed in memory and is discarded as soon as the analysis is complete or the popup is closed.
+ReadScore can use Chrome's built-in summarizer feature when it is available in the browser.
+
+- ReadScore does not send page content to a ReadScore server
+- summary generation depends on the browser environment and Chrome's built-in AI availability
+- summary settings are stored locally
+- generated summaries are shown on the page until you close the summary panel or leave the page
+
+## Local Storage
+
+ReadScore stores a small amount of preference data with `chrome.storage.local`.
+
+This can include:
+- reading tool toggle states such as Focus Mode, Tracking Assist, and Reading Guide
+- AI Summary preferences such as summary type and summary length
+
+This data remains on your device and is not transmitted to us.
 
 ## Permissions
 
-ReadScore requests the minimum permissions necessary to function:
+ReadScore requests only the permissions needed to function:
 
 | Permission | Purpose |
 | :--- | :--- |
-| `activeTab` | Allows the extension to read the text content of the current page only when you explicitly invoke the extension. |
-| `scripting` | Required to inject the analysis scripts and style the visual highlights on the page. |
-| `storage` | Used to save your highlighting preference (On/Off) locally. |
-
-## Third-Party Services
-
-ReadScore **does not** use any third-party analytics, tracking services, or external APIs. All logic is self-contained within the extension files.
+| `activeTab` | Allows the extension to access the current page only when you interact with the extension |
+| `scripting` | Allows ReadScore to inject its local content, reader, and summary scripts into the active page |
+| `storage` | Saves your local preferences such as reading tool toggles and AI Summary settings |
 
 ## Data Sharing
 
-Since we do not collect any data, we **do not** (and cannot) share, sell, or disclose your personal information to any third parties, advertisers, or government agencies.
+Because ReadScore does not collect your personal data and does not run a backend service, it does not sell, share, or disclose your page content or personal information to third parties.
 
 ## Security
 
-Because ReadScore operates locally, your data security is tied to the security of your own device and browser. By not transmitting data over the internet, we eliminate the risk of data interception or server-side breaches regarding your analysis.
+ReadScore minimizes data exposure by keeping processing inside the browser whenever possible. Your privacy and security therefore depend primarily on the security of your browser and device.
 
-## User Control
+## Your Control
 
-You have full control over the extension:
--   **Toggle Highlighting**: You can turn off visual highlighting at any time via the extension popup.
--   **Uninstall**: Removing the extension from Chrome will immediately delete all locally stored preferences associated with ReadScore.
+You can:
+- enable or disable reading tools at any time
+- choose whether to use AI Summary when supported
+- uninstall the extension to remove locally stored preferences
 
 ## Changes to This Policy
 
-We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. The "Last Updated" date at the top of this policy will indicate when the latest revisions were made.
+We may update this policy to reflect product changes, legal requirements, or clarification improvements. The "Last Updated" date above shows the latest revision date.
 
 ## Contact
 
-If you have any questions about this Privacy Policy or the ReadScore extension, please contact us at:
+If you have questions about this policy or the ReadScore extension, contact:
 
-**Email**: [heykaan.dev@gmail.com](mailto:heykaan.dev@gmail.com)
+**Email:** [heykaan.dev@gmail.com](mailto:heykaan.dev@gmail.com)
 
 ## Summary
 
-ReadScore is designed to be a tool you can trust. **We don't want your data.** We simply want to provide you with useful readability insights right in your browser.
+ReadScore is built to analyze and improve reading experiences without operating a remote data pipeline. The extension is intended to keep your content on your device while giving you useful analysis, reader tools, and optional browser-supported AI summaries.
 
 <br>
 
