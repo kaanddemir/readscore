@@ -13,36 +13,40 @@ const errorMessageEl = document.getElementById('error-message');
 const resultsEl = document.getElementById('results');
 const badgeEl = document.getElementById('badge');
 const badgeLevelEl = document.getElementById('badge-level');
-const readingTimeEl = document.getElementById('reading-time');
+
 const avgSentenceEl = document.getElementById('avg-sentence');
 const sentenceCardEl = document.getElementById('sentence-card');
 const sentenceQualityEl = document.getElementById('sentence-quality');
 const wordCountEl = document.getElementById('word-count');
 const wordCountCardEl = document.getElementById('wordcount-card');
 const wordCountCategoryEl = document.getElementById('wordcount-category');
-const highlightToggleEl = document.getElementById('highlight-toggle');
-// Issues section elements
-const issuesSummary = document.getElementById('issues-summary');
-const complexSentencesCount = document.getElementById('complex-sentences-count');
-const complexSentencesBadge = document.getElementById('complex-sentences-badge');
-const denseParagraphsCount = document.getElementById('dense-paragraphs-count');
-const denseParagraphsBadge = document.getElementById('dense-paragraphs-badge');
-const issuesSuccess = document.getElementById('issues-success');
-const loadMoreBtn = document.getElementById('load-more-btn');
+// Easy Read elements
+const focusModeToggle = document.getElementById('focus-mode-toggle');
+const spacingToggle = document.getElementById('spacing-toggle');
+const readingGuideToggle = document.getElementById('reading-guide-toggle');
+// AI Summary elements
+const smartSummarySection = document.getElementById('smart-summary-section');
+const aiUnavailable = document.getElementById('ai-unavailable');
+const aiReady = document.getElementById('ai-ready');
+const aiLoading = document.getElementById('ai-loading');
+const aiResult = document.getElementById('ai-result');
+const generateSummaryBtn = document.getElementById('generate-summary-btn');
+const summarySettingsBtn = document.getElementById('summary-settings-btn');
+const aiSettingsPanel = document.getElementById('ai-settings-panel');
+const summaryTypeSelect = document.getElementById('summary-type');
+const summaryLengthSelect = document.getElementById('summary-length');
+const aiRetryBtn = document.getElementById('ai-retry-btn');
+const closeSettingsBtn = document.getElementById('close-settings-btn');
+const aiResultInfo = document.querySelector('#ai-result .smart-summary-info');
 // Help elements
 const helpBtn = document.getElementById('help-btn');
-// Selection button
 // Selection buttons
 const selectionBtn = document.getElementById('selection-btn');
 const headerSelectionBtn = document.getElementById('header-selection-btn');
 
 // State
 let currentTabId = null;
-let analysisResults = null;
-// Issue navigation tracking
-let currentComplexSentenceIndex = -1;
-let currentDenseParagraphIndex = -1;
-let highlightOffsets = { complexSentences: 0, denseParagraphs: 0 }; // Synced with content.js
+let isGeneratingSummary = false;
 
 /**
  * Show a specific state (initial, loading, error, or results)
@@ -79,7 +83,10 @@ function updateUI(results) {
         return;
     }
 
-    analysisResults = results;
+    if (results.isSelectionAnalysis && results.isLowConfidence) {
+        showError('Selection too short. Please select more text for analysis.');
+        return;
+    }
 
     // Update badge
     const level = results.level.toLowerCase();
@@ -87,7 +94,7 @@ function updateUI(results) {
     badgeLevelEl.textContent = results.level;
 
     // Update metrics
-    readingTimeEl.textContent = results.readingTime.formatted;
+
     avgSentenceEl.textContent = results.avgSentenceLength;
 
     // Update Grade Label with Descriptive Text
@@ -128,7 +135,6 @@ function updateUI(results) {
     // Update sentence quality label and color
     if (results.sentenceQuality) {
         sentenceQualityEl.textContent = results.sentenceQuality.label;
-        // Remove old quality classes and add new one
         sentenceCardEl.className = 'metric-card ' + results.sentenceQuality.colorClass;
     }
 
@@ -140,106 +146,13 @@ function updateUI(results) {
         wordCountCardEl.className = 'metric-card ' + results.wordCountCategory.colorClass;
     }
 
-    // Update issues section (with safety check)
-    if (results.issues) {
-        updateIssuesSection(results.issues);
-    }
-
-    // Show/Hide Low Confidence Warning
-    const warningEl = document.getElementById('low-confidence-warning');
-    if (warningEl) {
-        if (results.isLowConfidence) {
-            warningEl.classList.remove('hidden');
-        } else {
-            warningEl.classList.add('hidden');
-        }
-    }
+    // Disable Easy Read toggles for selection analysis (no DOM elements)
+    const isSelection = results.isSelectionAnalysis;
+    if (focusModeToggle) focusModeToggle.disabled = !!isSelection;
+    if (spacingToggle) spacingToggle.disabled = !!isSelection;
+    if (readingGuideToggle) readingGuideToggle.disabled = !!isSelection;
 
     showState('results');
-}
-
-/**
- * Update the issues section with breakdown and list
- */
-function updateIssuesSection(issues) {
-    const complexSentencesCnt = issues.complexSentences.length;
-    const denseParagraphsCnt = issues.denseParagraphs.length;
-    const totalIssues = complexSentencesCnt + denseParagraphsCnt;
-
-    // Update badge counts
-    complexSentencesCount.textContent = complexSentencesCnt;
-    denseParagraphsCount.textContent = denseParagraphsCnt;
-
-    // Update badge highlighting
-    complexSentencesBadge.classList.toggle('has-issues', complexSentencesCnt > 0);
-    denseParagraphsBadge.classList.toggle('has-issues', denseParagraphsCnt > 0);
-
-    // Load More button is hidden by default - only shown when highlighting is enabled
-    loadMoreBtn.classList.add('hidden');
-
-    // Check if this is a selection analysis (no DOM elements to highlight)
-    const isSelectionAnalysis = analysisResults && analysisResults.isSelectionAnalysis;
-
-    // Show success or summary based on issues
-    if (totalIssues === 0) {
-        issuesSummary.classList.add('hidden');
-        issuesSuccess.classList.remove('hidden');
-        // Disable toggle when no issues
-        highlightToggleEl.disabled = true;
-        highlightToggleEl.checked = false;
-    } else {
-        // Show summary if there are issues (independent of toggle)
-        issuesSummary.classList.remove('hidden');
-        issuesSuccess.classList.add('hidden');
-        // Enable toggle only if NOT a selection analysis
-        highlightToggleEl.disabled = isSelectionAnalysis;
-        if (isSelectionAnalysis) {
-            highlightToggleEl.checked = false;
-        }
-    }
-}
-
-/**
- * Load more highlights
- */
-async function loadMoreHighlights() {
-    if (!currentTabId || !analysisResults) return;
-
-    // Prevent spamming
-    loadMoreBtn.disabled = true;
-    loadMoreBtn.style.opacity = '0.5';
-
-    // Process both types
-    const types = ['complexSentences', 'denseParagraphs'];
-    for (const type of types) {
-        try {
-            const response = await sendToContentScript({
-                action: 'loadMoreHighlights',
-                type: type
-            });
-            if (response && response.nextOffset !== undefined) {
-                highlightOffsets[type] = response.nextOffset;
-            }
-        } catch (e) {
-            // Silent fail - highlighting error
-        }
-    }
-
-    // Re-enable button and check if more available
-    loadMoreBtn.style.opacity = '1';
-    loadMoreBtn.disabled = false;
-
-    const issues = analysisResults.issues;
-    const hasMore = issues.complexSentences.length > highlightOffsets.complexSentences ||
-        issues.denseParagraphs.length > highlightOffsets.denseParagraphs;
-
-    if (!hasMore) {
-        loadMoreBtn.classList.add('hidden');
-    }
-}
-
-if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', loadMoreHighlights);
 }
 
 // Help modal toggle
@@ -288,19 +201,27 @@ if (helpBtn && helpOverlay) {
             }
         });
     });
-}
 
-/**
- * Scroll to a specific issue on the page
- */
-async function scrollToIssue(type, index) {
-    if (currentTabId) {
-        await sendToContentScript({
-            action: 'scrollToIssue',
-            issueType: type,
-            issueIndex: index
-        });
-    }
+    // Section Toggle Logic
+    const helpSections = document.querySelectorAll('.help-section');
+    helpSections.forEach(section => {
+        const header = section.querySelector('.help-section-header');
+        if (header) {
+            header.addEventListener('click', () => {
+                const isOpen = section.classList.contains('open');
+
+                // Close all others
+                helpSections.forEach(otherSection => {
+                    otherSection.classList.remove('open');
+                });
+
+                // Toggle current
+                if (!isOpen) {
+                    section.classList.add('open');
+                }
+            });
+        }
+    });
 }
 
 /**
@@ -318,10 +239,15 @@ async function injectContentScript(tabId) {
             // Script not running, proceed with injection
         }
 
-        // Inject the analyzer first, then content script
+        // Inject analyzer, then easy read module, then content script
         await chrome.scripting.executeScript({
             target: { tabId: tabId },
             files: ['src/analyzer.js']
+        });
+
+        await chrome.scripting.executeScript({
+            target: { tabId: tabId },
+            files: ['src/easyread.js']
         });
 
         await chrome.scripting.executeScript({
@@ -331,12 +257,11 @@ async function injectContentScript(tabId) {
 
         await chrome.scripting.insertCSS({
             target: { tabId: tabId },
-            files: ['src/styles.css']
+            files: ['src/easyread-styles.css']
         });
 
         return true;
     } catch (error) {
-        // Failed to inject content script
         console.error('Injection failed:', error);
         return false;
     }
@@ -350,7 +275,6 @@ async function sendToContentScript(message) {
         const response = await chrome.tabs.sendMessage(currentTabId, message);
         return response;
     } catch (error) {
-        // Message send failed
         return null;
     }
 }
@@ -398,51 +322,26 @@ async function analyzeCurrentPage() {
 
         updateUI(results);
 
-        // Default state: Highlighting OFF for new analysis
-        // We do NOT restore from storage here anymore, user must explicitly enable it.
-        const hasIssues = results.issues && (results.issues.complexSentences.length + results.issues.denseParagraphs.length) > 0;
-
-        highlightToggleEl.checked = false; // Always start unchecked
-
-        if (!hasIssues) {
-            highlightToggleEl.disabled = true;
-        } else {
-            highlightToggleEl.disabled = false;
-        }
-
     } catch (error) {
         showError('Analysis failed. Please refresh the page. ' + error.message);
     }
 }
 
 /**
- * Handle toggle change
+ * Handle Easy Read toggle change
  */
-async function handleToggleChange(event) {
-    const enabled = event.target.checked;
-
+async function handleEasyReadToggle(feature, enabled) {
     // Save state
-    await chrome.storage.local.set({ highlightEnabled: enabled });
+    const storageKey = `easyRead_${feature}`;
+    await chrome.storage.local.set({ [storageKey]: enabled });
 
     // Send to content script
     if (currentTabId) {
-        sendToContentScript({ action: 'toggleHighlight', enabled: enabled });
-
-        // Sync offsets with content.js - initial batch is 50
-        if (enabled && analysisResults) {
-            const issues = analysisResults.issues;
-            highlightOffsets.complexSentences = Math.min(50, issues.complexSentences.length);
-            highlightOffsets.denseParagraphs = Math.min(50, issues.denseParagraphs.length);
-
-            // Update button visibility
-            const hasMore = issues.complexSentences.length > highlightOffsets.complexSentences ||
-                issues.denseParagraphs.length > highlightOffsets.denseParagraphs;
-            loadMoreBtn.classList.toggle('hidden', !hasMore);
-        } else {
-            // Reset offsets when disabled
-            highlightOffsets = { complexSentences: 0, denseParagraphs: 0 };
-            loadMoreBtn.classList.add('hidden');
-        }
+        await sendToContentScript({
+            action: 'toggleEasyRead',
+            feature: feature,
+            enabled: enabled
+        });
     }
 }
 
@@ -489,31 +388,16 @@ async function analyzeSelection() {
 
         const selectedText = selectionResponse.selectedText;
 
-        // Check minimum length (at least 50 characters for meaningful analysis)
+        // Check minimum length
         if (selectedText.length < 50) {
             showError('Selection too short. Please select more text for analysis.');
             return;
         }
 
-        // Analyze locally using ReadScoreAnalyzer (already loaded in popup)
-        // Split text into paragraphs (by double newlines or single newlines)
-        const paragraphs = selectedText
-            .split(/\n\s*\n|\n/)
-            .map(p => p.trim())
-            .filter(p => p.length > 10);
-
-        const results = ReadScoreAnalyzer.analyzeText(selectedText, paragraphs);
-
-        // For selection analysis, we don't have DOM elements to highlight
-        // So we disable the highlighting toggle and issues navigation
+        const results = ReadScoreAnalyzer.analyzeText(selectedText);
         results.isSelectionAnalysis = true;
 
-        analysisResults = results;
         updateUI(results);
-
-        // Disable highlighting for selection analysis (no DOM elements)
-        highlightToggleEl.checked = false;
-        highlightToggleEl.disabled = true;
 
     } catch (error) {
         showError('Analysis failed: ' + error.message);
@@ -521,7 +405,6 @@ async function analyzeSelection() {
 }
 
 // Event Listeners
-highlightToggleEl.addEventListener('change', handleToggleChange);
 startBtnEl.addEventListener('click', analyzeCurrentPage);
 if (selectionBtn) {
     selectionBtn.addEventListener('click', analyzeSelection);
@@ -530,54 +413,273 @@ if (headerSelectionBtn) {
     headerSelectionBtn.addEventListener('click', analyzeSelection);
 }
 
-// Badge Navigation Listeners
-complexSentencesBadge.addEventListener('click', () => {
-    if (!analysisResults || !analysisResults.issues.complexSentences.length) return;
-
-    const total = analysisResults.issues.complexSentences.length;
-    const highlightedCount = highlightOffsets.complexSentences;
-
-    // Always navigate within loaded items (start with 50 if none loaded/highlighted)
-    // If user loaded 60 items, cycle through 60. If 0 loaded, cycle through first 50.
-    const effectiveLimit = Math.max(highlightedCount, 50);
-    const limit = Math.min(total, effectiveLimit);
-
-    // Increment index and loop within limit
-    currentComplexSentenceIndex = (currentComplexSentenceIndex + 1) % limit;
-    scrollToIssue('complexSentence', currentComplexSentenceIndex);
-
-    // Visual feedback
-    updateBadgeFeedback(complexSentencesBadge, currentComplexSentenceIndex + 1, limit);
-});
-
-denseParagraphsBadge.addEventListener('click', () => {
-    if (!analysisResults || !analysisResults.issues.denseParagraphs.length) return;
-
-    const total = analysisResults.issues.denseParagraphs.length;
-    const highlightedCount = highlightOffsets.denseParagraphs;
-
-    // Always navigate within loaded items (start with 50 if none loaded/highlighted)
-    const effectiveLimit = Math.max(highlightedCount, 50);
-    const limit = Math.min(total, effectiveLimit);
-
-    // Increment index and loop within limit
-    currentDenseParagraphIndex = (currentDenseParagraphIndex + 1) % limit;
-    scrollToIssue('denseParagraph', currentDenseParagraphIndex);
-
-    // Visual feedback
-    updateBadgeFeedback(denseParagraphsBadge, currentDenseParagraphIndex + 1, limit);
-});
+// Easy Read Toggle Listeners
+if (focusModeToggle) {
+    focusModeToggle.addEventListener('change', (e) => {
+        const enabled = e.target.checked;
+        handleEasyReadToggle('focusMode', enabled);
+        
+        // Disable and UNCHECK spacing toggle based on Focus Mode
+        if (spacingToggle) {
+            if (enabled && spacingToggle.checked) {
+                spacingToggle.checked = false;
+                handleEasyReadToggle('simplifiedSpacing', false);
+            }
+            spacingToggle.disabled = enabled;
+            const parent = spacingToggle.closest('.easyread-option');
+            if (parent) {
+                parent.style.opacity = enabled ? '0.6' : '1';
+                parent.style.pointerEvents = enabled ? 'none' : 'auto';
+            }
+        }
+    });
+}
+if (spacingToggle) {
+    spacingToggle.addEventListener('change', (e) => {
+        handleEasyReadToggle('simplifiedSpacing', e.target.checked);
+    });
+}
+if (readingGuideToggle) {
+    readingGuideToggle.addEventListener('change', (e) => {
+        handleEasyReadToggle('readingGuide', e.target.checked);
+    });
+}
 
 /**
- * Visual feedback for badge click
+ * Restore Easy Read toggle states from content script
  */
-function updateBadgeFeedback(badgeEl, current, total) {
-    // Add active class for animation
-    badgeEl.classList.add('badge-active');
-    setTimeout(() => badgeEl.classList.remove('badge-active'), 200);
+function restoreEasyReadState(easyReadState) {
+    if (!easyReadState) return;
+    if (focusModeToggle) focusModeToggle.checked = !!easyReadState.focusMode;
+    if (spacingToggle) {
+        // Ensure spacing toggle reflects focus mode state
+        const isFocusMode = focusModeToggle && focusModeToggle.checked;
+        
+        // If Focus Mode is on, force spacing toggle to be unchecked and disabled
+        if (isFocusMode) {
+            spacingToggle.checked = false;
+            spacingToggle.disabled = true;
+        } else {
+            spacingToggle.checked = !!easyReadState.simplifiedSpacing;
+            spacingToggle.disabled = false;
+        }
 
-    // Optional: Update text momentarily to show "3 / 18" etc.
-    // For now just the click animation is fine
+        const parent = spacingToggle.closest('.easyread-option');
+        if (parent) {
+            parent.style.opacity = isFocusMode ? '0.6' : '1';
+            parent.style.pointerEvents = isFocusMode ? 'none' : 'auto';
+        }
+    }
+    if (readingGuideToggle) readingGuideToggle.checked = !!easyReadState.readingGuide;
+}
+
+// ======================
+// SMART SUMMARY
+// ======================
+
+/**
+ * Check if Chrome AI Summarizer is available
+ */
+async function checkAIAvailability() {
+    if (!smartSummarySection) return;
+
+    try {
+        // Check if the Summarizer API exists
+        if (typeof Summarizer === 'undefined' && typeof self.ai === 'undefined') {
+            smartSummarySection.classList.remove('hidden');
+            showAIState('unavailable');
+            return;
+        }
+
+        // Try the standard API
+        const SummarizerAPI = (typeof Summarizer !== 'undefined') ? Summarizer : self.ai?.summarizer;
+
+        if (!SummarizerAPI || typeof SummarizerAPI.availability !== 'function') {
+            smartSummarySection.classList.remove('hidden');
+            showAIState('unavailable');
+            return;
+        }
+
+        const availability = await SummarizerAPI.availability({ outputLanguage: 'en' });
+
+        smartSummarySection.classList.remove('hidden');
+
+        if (availability === 'available' || availability === 'downloadable') {
+            showAIState('ready');
+        } else {
+            showAIState('unavailable');
+        }
+    } catch (e) {
+        smartSummarySection.classList.remove('hidden');
+        showAIState('unavailable');
+    }
+}
+
+/**
+ * Show specific AI state
+ */
+function showAIState(state) {
+    [aiUnavailable, aiReady, aiLoading, aiResult].forEach(el => {
+        if (el) el.classList.add('hidden');
+    });
+
+    switch (state) {
+        case 'unavailable': aiUnavailable?.classList.remove('hidden'); break;
+        case 'ready': aiReady?.classList.remove('hidden'); break;
+        case 'loading': aiLoading?.classList.remove('hidden'); break;
+        case 'result': aiResult?.classList.remove('hidden'); break;
+    }
+}
+
+function setAIResultStatus(label, tone = 'success') {
+    if (!aiResultInfo) return;
+
+    const toneColors = {
+        success: 'var(--accent-green)',
+        warning: 'var(--accent-amber)',
+        error: 'var(--accent-red)',
+        muted: 'var(--text-muted)'
+    };
+
+    aiResultInfo.textContent = label;
+    aiResultInfo.style.color = toneColors[tone] || toneColors.success;
+}
+
+function setAISummaryControlsDisabled(disabled) {
+    const controls = [generateSummaryBtn, summarySettingsBtn, aiRetryBtn, summaryTypeSelect, summaryLengthSelect];
+
+    controls.forEach(control => {
+        if (!control) return;
+        control.disabled = disabled;
+    });
+}
+
+/**
+ * Generate summary using Chrome AI
+ */
+async function generateSummary() {
+    if (!currentTabId || isGeneratingSummary) return;
+
+    isGeneratingSummary = true;
+    setAISummaryControlsDisabled(true);
+    showAIState('loading');
+
+    const type = summaryTypeSelect ? summaryTypeSelect.value : 'key-points';
+    const length = summaryLengthSelect ? summaryLengthSelect.value : 'medium';
+    let summarizer = null;
+
+    try {
+        // Get page text
+        const response = await chrome.tabs.sendMessage(currentTabId, { action: 'getPageText' });
+        let text = response?.summaryText?.trim() || response?.text?.trim() || '';
+        const wordCount = response?.summaryWordCount || response?.wordCount || (text ? text.split(/\s+/).length : 0);
+
+        if (!text || wordCount < 15) {
+            setAIResultStatus('Short', 'warning');
+            showAIState('result');
+            return;
+        }
+
+        // Final safeguard only. The content script now tries to send a curated section-aware input.
+        const words = text.split(/\s+/);
+        if (words.length > 4000) {
+            const head = words.slice(0, 2600).join(' ');
+            const tail = words.slice(-900).join(' ');
+            text = `${head}\n\n[Content gap]\n\n${tail}`;
+        }
+
+        // Get the Summarizer API
+        const SummarizerAPI = (typeof Summarizer !== 'undefined') ? Summarizer : self.ai?.summarizer;
+
+        if (!SummarizerAPI) {
+            setAIResultStatus('Error', 'error');
+            showAIState('result');
+            return;
+        }
+
+        // Create summarizer instance
+        summarizer = await SummarizerAPI.create({
+            type: type,
+            format: 'plain-text',
+            length: length,
+            outputLanguage: 'en'
+        });
+
+        // Generate summary
+        const summary = await summarizer.summarize(text);
+
+        // Display result on the page
+        const renderResponse = await chrome.tabs.sendMessage(currentTabId, {
+            action: 'showSummary',
+            summary: summary,
+            summaryType: type
+        });
+
+        if (!renderResponse || renderResponse.error) {
+            throw new Error(renderResponse?.error || 'Unable to show summary');
+        }
+
+        setAIResultStatus('Shown', 'success');
+        showAIState('result');
+
+    } catch (e) {
+        setAIResultStatus('Error', 'error');
+        showAIState('result');
+    } finally {
+        if (summarizer && typeof summarizer.destroy === 'function') {
+            try {
+                summarizer.destroy();
+            } catch (destroyError) {
+                // Ignore destroy cleanup errors
+            }
+        }
+        isGeneratingSummary = false;
+        setAISummaryControlsDisabled(false);
+    }
+}
+
+// AI Summary event listeners
+if (generateSummaryBtn) {
+    generateSummaryBtn.addEventListener('click', () => generateSummary());
+}
+if (summarySettingsBtn && aiSettingsPanel) {
+    summarySettingsBtn.addEventListener('click', () => {
+        aiSettingsPanel.classList.remove('hidden');
+    });
+}
+if (closeSettingsBtn && aiSettingsPanel) {
+    closeSettingsBtn.addEventListener('click', () => {
+        aiSettingsPanel.classList.add('hidden');
+    });
+}
+if (aiSettingsPanel) {
+    aiSettingsPanel.addEventListener('click', (e) => {
+        if (e.target === aiSettingsPanel) {
+            aiSettingsPanel.classList.add('hidden');
+        }
+    });
+}
+if (summaryTypeSelect) {
+    summaryTypeSelect.addEventListener('change', (e) => {
+        chrome.storage.local.set({ rs_summary_type: e.target.value });
+    });
+}
+if (summaryLengthSelect) {
+    summaryLengthSelect.addEventListener('change', (e) => {
+        const value = e.target.value;
+        chrome.storage.local.set({ rs_summary_length: value });
+        const warning = document.getElementById('ai-long-warning');
+        if (warning) {
+            if (value === 'long') {
+                warning.classList.remove('hidden');
+            } else {
+                warning.classList.add('hidden');
+            }
+        }
+    });
+}
+if (aiRetryBtn) {
+    aiRetryBtn.addEventListener('click', () => generateSummary());
 }
 
 /**
@@ -585,7 +687,6 @@ function updateBadgeFeedback(badgeEl, current, total) {
  */
 async function initializePopup() {
     try {
-        // Get current tab
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
         if (!tab || !tab.id) {
@@ -593,7 +694,6 @@ async function initializePopup() {
             return;
         }
 
-        // Check if we can run on this page
         if (!tab.url || tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://') || tab.url.includes('chrome.google.com/webstore') || tab.url.includes('chromewebstore.google.com')) {
             showState('unsupported');
             return;
@@ -601,44 +701,42 @@ async function initializePopup() {
 
         currentTabId = tab.id;
 
-        // Try to get cached results from content script
+        // Load saved AI Summary settings
+        chrome.storage.local.get(['rs_summary_type', 'rs_summary_length'], (result) => {
+            if (result.rs_summary_type && summaryTypeSelect) {
+                summaryTypeSelect.value = result.rs_summary_type;
+            }
+            if (result.rs_summary_length && summaryLengthSelect) {
+                summaryLengthSelect.value = result.rs_summary_length;
+                if (result.rs_summary_length === 'long') {
+                    const warning = document.getElementById('ai-long-warning');
+                    if (warning) warning.classList.remove('hidden');
+                }
+            }
+        });
+
+        // Check AI availability
+        checkAIAvailability();
+
+        // Try cached results
         try {
             const cached = await chrome.tabs.sendMessage(currentTabId, { action: 'getCachedResults' });
 
-            // Restore if we have results, regardless of whether highlighting is currently active
             if (cached && cached.hasResults && cached.results) {
-                // We have cached results, show them
                 updateUI(cached.results);
-
-                // Set toggle based on valid highlighting state from content script
-                const totalIssues = (cached.results.issues.complexSentences.length || 0) + (cached.results.issues.denseParagraphs.length || 0);
-
-                if (totalIssues > 0) {
-                    highlightToggleEl.checked = cached.isHighlighting;
-                    highlightToggleEl.disabled = false;
-                } else {
-                    highlightToggleEl.checked = false;
-                    highlightToggleEl.disabled = true;
-                }
-
-                // If highlighting is off, we still want to show the toggle as available (unchecked)
-                // If it's on, it will be checked.
-
+                restoreEasyReadState(cached.easyReadState);
                 return;
             }
         } catch (e) {
-            // Content script not loaded yet, show initial state
+            // Content script not loaded
         }
 
-        // No cached results, show initial state
         showState('initial');
 
     } catch (error) {
-        // Initialization failed, show initial state
         showState('initial');
     }
 }
-
 
 /**
  * Update version display from manifest
@@ -653,6 +751,25 @@ function updateVersionDisplay() {
 
 // Initialize on popup open
 document.addEventListener('DOMContentLoaded', () => {
+    // Wrap contents for ultra-smooth grid animation
+    document.querySelectorAll('.help-section-content').forEach(el => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'help-section-content-inner';
+        while (el.firstChild) {
+            wrapper.appendChild(el.firstChild);
+        }
+        el.appendChild(wrapper);
+    });
+
+    document.querySelectorAll('.help-accordion-content').forEach(el => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'help-accordion-content-inner';
+        while (el.firstChild) {
+            wrapper.appendChild(el.firstChild);
+        }
+        el.appendChild(wrapper);
+    });
+
     initializePopup();
     updateVersionDisplay();
 });

@@ -26,13 +26,6 @@ const ReadScoreAnalyzer = {
     COMPLEX_RATIO: {
       EASY: 0.08,  // Up to 8% complex words
       HARD: 0.15   // 15%+ complex words
-    },
-    PARAGRAPH_DENSITY: {
-      DENSE: 100,       // Words per paragraph threshold
-      MIN_SENTENCES: 4  // Minimum sentences to be considered dense
-    },
-    CLAUSE_DENSITY: {
-      COMPLEX: 4  // 4+ clauses = complex sentence
     }
   },
 
@@ -188,17 +181,23 @@ const ReadScoreAnalyzer = {
     // Protect ellipsis
     normalized = normalized.replace(/\.{2,}/g, '<ELLIP>');
 
+    // Protect multi-part abbreviations while preserving the final period
+    // so sentence boundaries still work for cases like "p.m. He left."
+    normalized = normalized.replace(/\b(?:[A-Za-z]{1,3}\.){2,}(?=\s|$|["')\]])/g, match => {
+      const core = match.endsWith('.') ? match.slice(0, -1) : match;
+      return core.replace(/\./g, '<ABBR>') + '.';
+    });
+
     // Protect common abbreviations
     const abbrPattern = Array.from(this.ABBREVIATIONS).join('|');
-    const abbrRegex = new RegExp(`\\b(${abbrPattern})\\.(?=\\s|$)`, 'gi');
+    const abbrRegex = new RegExp(`(?<!<ABBR>)\\b(${abbrPattern})\\.(?=\\s|$)`, 'gi');
     normalized = normalized.replace(abbrRegex, '$1<ABBR>');
 
     // Protect initials (e.g., J. K. Rowling, U. S. A.)
     normalized = normalized.replace(/\b([A-Z])\.\s(?=[A-Z]\.?\s?)/g, '$1<INIT> ');
 
-    // Protect numbered lists (1. 2. 3.)
-    normalized = normalized.replace(/^(\d+)\.\s/gm, '$1<NUM> ');
-    normalized = normalized.replace(/\s(\d+)\.\s/g, ' $1<NUM> ');
+    // Remove numbered list markers so each item can split like a normal sentence
+    normalized = normalized.replace(/(^|\s)\d+\.\s+(?=[A-Z])/g, '$1');
 
     // Split on sentence-ending punctuation followed by space and capital letter (or end)
     const sentences = normalized
@@ -214,7 +213,6 @@ const ReadScoreAnalyzer = {
           .replace(/<DEC>/g, '.')
           .replace(/<ELLIP>/g, '...')
           .replace(/<INIT>/g, '.')
-          .replace(/<NUM>/g, '.')
           .trim();
       })
       .filter(s => {
@@ -478,128 +476,11 @@ const ReadScoreAnalyzer = {
   },
 
   /**
-   * Count clauses in a sentence based on punctuation and connecting words
-   * @param {string} sentence - The sentence to analyze
-   * @returns {number} - Number of clauses
-   */
-  countClauses(sentence) {
-    // Only count strong clause starters, removing simple coordinating conjunctions 'and', 'or' to reduce noise
-    const connectingWords = [
-      'however', 'therefore', 'moreover', 'furthermore', 'nevertheless', // Transitions
-      'because', 'since', 'although', 'though', 'while', 'whereas', 'unless', 'until', // Subordinating
-      'which', 'who', 'whom', 'whose', 'where', 'when', 'whether', // Relative
-      'if', 'provided', 'assuming' // Conditional
-    ];
-
-    let clauseCount = 1; // Start with 1 (main clause)
-
-    // Count semicolons and colons as strong clause separators
-    const strongPunctuation = sentence.match(/[;:]/g);
-    if (strongPunctuation) {
-      clauseCount += strongPunctuation.length;
-    }
-
-    // Count connecting words but be careful about context
-    const lowerSentence = sentence.toLowerCase();
-    for (const word of connectingWords) {
-      // Look for the word preceded by punctuation or start of string, 
-      // OR followed by a comma (for transition words)
-      const regex = new RegExp(`(?:^|[,;]\\s+)\\b${word}\\b`, 'gi');
-      const matches = lowerSentence.match(regex);
-      if (matches) {
-        clauseCount += matches.length;
-      }
-    }
-
-    // Check for 'that' explicitly as it's common but noisy
-    // Only count 'that' if it's not 'so that' or 'such that'
-    const thatMatches = lowerSentence.match(/\b(?<!so\s|such\s)that\b/gi);
-    if (thatMatches) {
-      // limit impact of 'that' to avoid overcounting relative clauses
-      clauseCount += Math.min(thatMatches.length, 3);
-    }
-
-    return clauseCount;
-  },
-
-  /**
-   * Identify complex sentences based on clause density within paragraphs
-   * @param {string[]} paragraphs - Array of paragraph texts
-   * @returns {Object[]} - Array of complex sentence objects with paragraph index
-   */
-  identifyComplexSentences(paragraphs) {
-    const threshold = this.THRESHOLDS.CLAUSE_DENSITY.COMPLEX;
-    const complexSentences = [];
-    let globalSentenceIndex = 0;
-
-    paragraphs.forEach((paragraphText, pIndex) => {
-      const pSentences = this.extractSentences(paragraphText);
-
-      pSentences.forEach((sentence) => {
-        const clauseCount = this.countClauses(sentence);
-        const words = this.extractWords(sentence);
-
-        // A sentence is complex if it has many clauses AND is reasonably long
-        // We avoid flagging short sentences that happen to have "which" or "that"
-        if (clauseCount >= 3 && words.length >= 20) {
-          complexSentences.push({
-            text: sentence,
-            clauseCount: clauseCount,
-            wordCount: words.length,
-            index: globalSentenceIndex, // Keep global index for compatibility
-            paragraphIndex: pIndex, // Critical for robust highlighting
-            isComplex: true
-          });
-        }
-        globalSentenceIndex++;
-      });
-    });
-
-    return complexSentences;
-  },
-
-  /**
-   * Analyze paragraphs for density
-   * Uses multiple factors for accurate detection
-   * @param {string[]} paragraphs - Array of paragraph texts
-   * @returns {Object[]} - Array of dense paragraph objects
-   */
-  identifyDenseParagraphs(paragraphs) {
-    const { DENSE, MIN_SENTENCES } = this.THRESHOLDS.PARAGRAPH_DENSITY;
-
-    return paragraphs
-      .map((para, index) => {
-        const words = this.extractWords(para);
-        const sentences = this.extractSentences(para);
-        const avgSentenceLength = sentences.length > 0 ? words.length / sentences.length : 0;
-
-        // A paragraph is considered dense if:
-        // 1. It has 100+ words AND 4+ sentences (wall of text)
-        // 2. OR 150+ words regardless of sentence count (very long paragraph)
-        // 3. OR 80+ words with 25+ words per sentence (complex sentences)
-        const isDenseByLength = words.length >= DENSE && sentences.length >= MIN_SENTENCES;
-        const isVeryLong = words.length >= 150;
-        const isComplexAndLong = words.length >= 80 && avgSentenceLength >= 25;
-
-        return {
-          text: para,
-          index: index,
-          wordCount: words.length,
-          sentenceCount: sentences.length,
-          avgSentenceLength: Math.round(avgSentenceLength * 10) / 10,
-          isDense: isDenseByLength || isVeryLong || isComplexAndLong
-        };
-      })
-      .filter(p => p.isDense);
-  },
-
-  /**
    * Main analysis function
    * @param {string} text - The full text to analyze
-   * @param {string[]} paragraphs - Array of paragraph texts (for paragraph analysis)
    * @returns {Object} - Complete analysis results
    */
-  analyzeText(text, paragraphs = []) {
+  analyzeText(text) {
     // Extract core data
     const sentences = this.extractSentences(text);
     const words = this.extractWords(text);
@@ -624,10 +505,6 @@ const ReadScoreAnalyzer = {
     // Classify word count category
     const wordCountCategory = this.classifyWordCount(words.length);
 
-    // Identify issues for highlighting
-    const complexSentences = this.identifyComplexSentences(paragraphs);
-    const denseParagraphs = this.identifyDenseParagraphs(paragraphs);
-
     return {
       // Core metrics
       level: level,
@@ -640,16 +517,7 @@ const ReadScoreAnalyzer = {
       sentenceQuality: sentenceQuality,
 
       // Reliability indicator
-      isLowConfidence: words.length < 100, // Not enough text for highly reliable analysis
-
-      // Issues for highlighting
-      issues: {
-        complexSentences: complexSentences,
-        denseParagraphs: denseParagraphs
-      },
-
-      // Summary counts
-      issueCount: complexSentences.length + denseParagraphs.length
+      isLowConfidence: words.length < 100 // Not enough text for highly reliable analysis
     };
   }
 };

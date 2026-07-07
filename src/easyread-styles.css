@@ -1,0 +1,31 @@
+/**
+ * ReadScore - Easy Read Styles
+ * In-page styles for accessibility features.
+ */
+
+/* Reading Guide - Ruler Overlays */
+#readscore-ruler-top,
+#readscore-ruler-bottom {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  z-index: 999999;
+  transition: height 0.03s linear, top 0.03s linear;
+}
+
+#readscore-ruler-top {
+  top: 0;
+}
+
+#readscore-ruler-strip {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 999999;
+  border-top: 2px solid rgba(59, 130, 246, 0.5);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.5);
+  transition: top 0.03s linear;
+}
