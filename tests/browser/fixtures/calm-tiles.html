@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>calm tiles (Google results pattern)</title>
+<style>
+body{font:16px/1.5 sans-serif;margin:0;padding:16px;background:#202124;color:#e8eaed}
+.row{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px}
+.collage{display:grid;grid-template-columns:300px 200px;gap:2px;border-radius:16px;overflow:hidden}
+.collage [role="button"]{cursor:pointer}
+.vid{position:relative;width:260px;height:150px;border-radius:16px;overflow:hidden}
+.vid .meta{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.7);color:#fff;padding:2px 6px;border-radius:8px}
+.bgtile{width:200px;height:140px;border-radius:12px}
+.place{display:block;width:180px;color:#8ab4f8}
+.textcard{width:240px;padding:16px;border-radius:12px}
+</style></head><body>
+<h1>Türkiye</h1>
+<div class="row">
+  <div class="collage">
+    <div role="button" tabindex="0" id="tileMain" aria-label="Image 1"><g-img><img id="collage1" width="300" height="300" alt=""></g-img></div>
+    <div role="button" tabindex="0" aria-label="Image 2"><g-img><img id="collage2" width="200" height="149" alt=""></g-img></div>
+  </div>
+  <div role="button" tabindex="0" class="vid" id="vidTile" aria-label="Video"><img id="vidThumb" width="260" height="150" alt=""><span class="meta" id="vidMeta">19:51 · 15 hours ago</span></div>
+  <div role="button" tabindex="0" class="bgtile" id="bgTile" aria-label="Map"></div>
+</div>
+<div class="row">
+  <a class="place" href="#p1"><img id="place1" width="180" height="120" alt=""><span>Istanbul</span></a>
+  <div class="textcard" id="textCard">Text card on a background image: the text must stay sharp.</div>
+  <button id="svgBtn" aria-label="Expand"><svg width="120" height="120" viewBox="0 0 120 120"><path d="M10 10h100v100H10z" fill="none" stroke="#fff" stroke-width="8"/></svg></button>
+</div>
+<script>
+const stripes = "data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='480' height='270'><defs><pattern id='p' width='8' height='8' patternUnits='userSpaceOnUse'><rect width='4' height='8' fill='#222'/><rect x='4' width='4' height='8' fill='#e33'/></pattern></defs><rect width='100%' height='100%' fill='url(#p)'/></svg>");
+for (const i of document.querySelectorAll('img')) i.src = stripes;
+for (const id of ['bgTile', 'textCard']) document.getElementById(id).style.backgroundImage = `url("${stripes}")`;
+</script>
+</body></html>

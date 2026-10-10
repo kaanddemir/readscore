@@ -1,140 +1,129 @@
-# ReadScore
-
-<div align="center">
-  <img src="icons/icon128.png" alt="ReadScore Logo" width="128" height="128">
-</div>
-
 <p align="center">
-  Analyze the readability of web pages with transparent, explainable metrics.
+  <img src="icons/icon128.png" alt="ReadScore" width="96">
 </p>
 
-## Overview
+<h1 align="center">ReadScore</h1>
 
-**ReadScore** is a privacy-first Chrome extension for understanding and improving how readable a page feels. It combines transparent readability metrics, a local reader overlay, and Chrome's built-in AI summarization when available.
+<p align="center">
+  A Chrome extension that makes existing web pages easier to read,<br>
+  without replacing their content.
+</p>
 
-The extension is designed to stay explainable:
-- Readability analysis is rule-based and runs locally in the browser.
-- Reader tools work directly on the page without sending your content to a remote backend.
-- AI Summary uses Chrome's built-in summarizer support when your browser provides it.
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/readscore/ocklmdaccbpakdjnkhckobkoochkajeg"><b>Install from the Chrome Web Store</b></a>
+</p>
 
-## Features
+## How it works
 
-- **General Analysis**
-  - Readability Score
-  - Words per Sentence
-  - Total Words
-- **Selection Analysis**
-  - Analyze only the text you selected on the page
-  - Short selections are blocked with a clear warning
-- **AI Summary**
-  - Generates a page summary in a draggable on-page panel
-  - Supports different summary types and lengths
-  - Uses Chrome's built-in AI summarizer when available
-- **Reading Tools**
-  - Focus Mode
-  - Tracking Assist
-  - Reading Guide
-- **Local Preferences**
-  - Stores reading tool toggle states locally
-  - Remembers AI Summary type and length settings
+1. Open a web page and click the **ReadScore** icon in the Chrome toolbar.
+2. Turn on **Focus**, **Comfort** or **Calm** and adjust their settings.
+3. The changes apply to the page right away. **Reset All** in the menu restores the defaults.
 
-## How It Works
+The modes work independently and can be combined. ReadScore runs on a page only after you open the popup there, and effects end when the page is reloaded or you navigate away. Open the popup again to reapply your saved settings.
 
-1. **Content Extraction**  
-   ReadScore identifies readable page content from the active tab and filters out noise such as navigation, banners, and sidebars.
+## Focus
 
-2. **Readability Analysis**  
-   The extension calculates explainable metrics such as readability level, sentence length, and total word count using local JavaScript logic.
+Highlights one paragraph at a time.
 
-3. **Reader Tools**  
-   Focus Mode rebuilds a cleaner reading surface, Tracking Assist adjusts spacing, and Reading Guide adds a line-following aid.
+- **Keyboard**: move with `J` and `K`
+- **Follow Scroll**: the highlight follows the middle of the screen as you scroll
+- Yellow, blue, green or dark highlight
+- **Pause** and **Resume** from the popup or with `Esc`
 
-4. **AI Summary**  
-   If Chrome's summarizer is available, ReadScore prepares a cleaned summary input and renders the result in an on-page summary panel.
+## Comfort
 
-## Requirements
+Adjusts reading text without changing the page's layout or content.
 
-- Chrome or a Chromium-based browser with extension support
-- For **AI Summary**, Chrome's built-in summarizer must be available
-- The AI Summary help text currently targets **Chrome 138+**
+- **Spacing**: Site, Relaxed, Roomy (the WCAG 1.4.12 text spacing values) or Custom line, letter, word and paragraph spacing
+- **Font**: the site's own, sans serif, serif or the bundled Atkinson Hyperlegible
+- **Text Size**: a minimum of 18, 20 or 22 px; larger text is left as it is
 
-All non-AI features still work without summarizer support.
+## Calm
 
-## Privacy
+Reduces distractions on busy pages.
 
-ReadScore is built to run locally.
+- **Reduce Motion** makes animations and transitions finish instantly and pauses muted background videos. Videos you start yourself keep playing.
+- **Blur Images** blurs large images and videos (Light or Strong) until you hover over or Tab to them
+- **Show All Images** reveals every blurred image on the page until you blur them again
 
-- Readability analysis runs in-browser
-- Reader tools run in-browser
-- Preferences are stored locally with `chrome.storage.local`
-- ReadScore does not operate a backend or send analyzed page content to external servers
+## Keyboard controls
 
-For full details, see [PRIVACY_POLICY.md](PRIVACY_POLICY.md).
+With Focus set to **Keyboard**:
+
+| Key | Action |
+| --- | --- |
+| `J` | Next Paragraph |
+| `K` | Previous Paragraph |
+| `Esc` | Pause Focus |
+| `J` or `K` while paused | Resume at the remembered paragraph |
+
+ReadScore ignores these keys while you type, use a form control or focused widget, hold a modifier key or have a dialog open. Some sites use `J` and `K` themselves; choose **Follow Scroll** there to keep the site's shortcuts.
+
+## Installation
+
+**From the Chrome Web Store:** open [ReadScore on the Chrome Web Store](https://chromewebstore.google.com/detail/readscore/ocklmdaccbpakdjnkhckobkoochkajeg) and choose **Add to Chrome**.
+
+**From source** (Chrome 116 or newer, Node.js 22.12 or newer):
+
+```bash
+npm install
+npm run build
+```
+
+Then open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked** and select the `dist` folder.
 
 ## Permissions
 
 | Permission | Why it is needed |
-| :--- | :--- |
-| `activeTab` | Read the currently active page only when the user invokes the extension |
-| `scripting` | Inject content and reading-tool scripts into the active page |
-| `storage` | Save local preferences such as reading tool toggles and summary settings |
+| --- | --- |
+| `activeTab` | Access the current tab, only after you open the popup |
+| `scripting` | Load ReadScore and its reading styles into that tab |
+| `storage` | Save your settings in Chrome's synced extension storage |
 
-## Tech Stack
+ReadScore requests no host permissions and has no content scripts that run automatically.
 
-- Chrome Extension APIs
-- Local JavaScript readability analysis
-- Chrome's built-in AI summarizer support when available
-- `chrome.storage.local` for local preferences
+## Privacy
 
-## Installation
+ReadScore has no accounts, servers, analytics or tracking, and makes no network requests. Page text and images are processed in the tab and never stored or sent anywhere. Your settings are saved with `chrome.storage.sync`, so Chrome may sync them to other browsers signed in to the same Google account when Chrome sync is on.
 
-### Chrome Web Store
+Read the full [Privacy Policy](PRIVACY_POLICY.md).
 
-[Install ReadScore](https://chromewebstore.google.com/detail/readscore/ocklmdaccbpakdjnkhckobkoochkajeg?authuser=0&hl=en)
+## Good to know
 
-### Manual Installation
+- Works on regular websites. Chrome's own pages and the Chrome Web Store cannot be changed by extensions.
+- Focus works best on article-like text and cannot reach content inside closed shadow roots.
+- Calm decides which images are meaningful with heuristics. Background images and closed shadow roots are not always detected.
+- Muted video autoplay varies by site and browser policy.
+- A larger minimum text size can cut off labels on some sites.
 
-1. Clone this repository.
-2. Open `chrome://extensions/`.
-3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select this project folder.
-
-## Project Structure
+## Development
 
 ```bash
-ReadScore/
-├── icons/                  # Extension icons
-├── popup/
-│   ├── popup.html          # Popup markup
-│   ├── popup.css           # Popup styles
-│   └── popup.js            # Popup logic and Chrome messaging
-├── src/
-│   ├── analyzer.js         # Readability analysis logic
-│   ├── content.js          # Page extraction and AI summary panel logic
-│   ├── easyread.js         # Focus Mode, Tracking Assist, Reading Guide
-│   └── easyread-styles.css # Injected reading-tool styles
-├── manifest.json           # Extension manifest
-├── PRIVACY_POLICY.md       # Privacy policy
-└── README.md               # Project documentation
+npm run dev                 # rebuild dist on every change
+npm test                    # unit tests
+npm run check               # typecheck, unit tests, production build and dist verification
+npm run test:browser:core   # browser smoke and popup checks (local fixtures)
+npm run test:browser:all    # full local browser regression
+npm run test:sites          # real website sweeps (network)
+npm run test:release        # check, full local regression and full site sweeps
 ```
 
-## Contributing
+Individual steps are also available as `npm run typecheck`, `npm run build` and `npm run verify`, and each mode has its own browser suite (`test:browser:focus`, `:comfort`, `:calm`). Browser tests need Playwright installed outside the project; see [tests/browser](tests/browser/README.md) for setup and for which tests to run for which change. Release notes are in the [Changelog](CHANGELOG.md).
 
-Contributions are welcome.
+## Project structure
 
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Push the branch.
-5. Open a pull request.
+```text
+src/background/   service worker and page stylesheet management
+src/content/      injected runtime and the Focus, Comfort and Calm modes
+src/shared/       settings, messages and generated mode CSS
+src/ui/           popup, shared components, icons and design tokens
+scripts/          production build and dist verification
+tests/unit/       unit and DOM tests
+tests/browser/    real Chromium checks, fixtures and site sweeps
+icons/, fonts/    extension icons and the bundled Atkinson Hyperlegible font
+assets/brand/     icon SVG masters and the icon renderer
+```
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for details.
-
-<br>
-
-<div align="center">
-  <p>Built by <a href="https://heykaan.dev">heykaan.dev</a></p>
-</div>
+Released under the [MIT License](LICENSE). Atkinson Hyperlegible (Braille Institute) is licensed under the [SIL Open Font License 1.1](fonts/OFL.txt).

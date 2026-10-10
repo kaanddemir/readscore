@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>focus-basic</title>
+<style>body{font:16px/1.4 sans-serif;max-width:720px;margin:auto} .card{display:flex;gap:8px}</style></head><body>
+<header><p data-expect="skip">Site header tagline that is long enough to count as text.</p></header>
+<nav><ul><li data-expect="skip">Navigation item with a fairly long label text here</li></ul></nav>
+<main>
+ <h1 data-expect="focus">Main title</h1>
+ <p data-expect="focus">Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+ <p data-expect="focus">A paragraph with <a href="#">a link</a>, <strong>bold text</strong> and <em>emphasis</em> inside it, still one block.</p>
+ <h2 data-expect="focus">Lists</h2>
+ <ul><li data-expect="focus">A list item that is long enough to be read as its own block.</li>
+     <li><p data-expect="focus">A list item wrapping a paragraph: the paragraph is the block.</p></li>
+     <li data-expect="focus">Outer item with enough text to count before the nested list.<ul><li data-expect="focus">A nested list item that also has plenty of text.</li></ul></li></ul>
+ <blockquote><p data-expect="focus">A quoted paragraph inside a blockquote element, long enough.</p></blockquote>
+ <div class="card"><div data-expect="focus">Div soup: this text sits directly inside a div with no paragraph element around it at all.</div></div>
+ <p data-expect="skip">Read more</p>
+ <pre data-expect="skip">const code = "never a reading block even if long enough to qualify";</pre>
+ <div contenteditable="true"><p data-expect="skip">Editable paragraph: the user is typing here, so focus must not take over.</p></div>
+ <form><label data-expect="skip">A form label that is long enough to be mistaken for text</label><input></form>
+ <p aria-hidden="true" data-expect="skip">Hidden from assistive technology, decorative duplicate text.</p>
+ <p style="display:none" data-expect="skip">Not displayed at all, but long enough to qualify as text.</p>
+ <table><tr><td><p data-expect="focus">A paragraph inside a table cell, as old layouts do.</p></td></tr></table>
+</main>
+<aside><p data-expect="skip">Sidebar promo paragraph with enough words to look like content.</p></aside>
+<footer><p data-expect="skip">Footer copyright paragraph that is also long enough to count.</p></footer>
+</body></html>

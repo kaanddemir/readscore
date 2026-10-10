@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- ReadScore mark: a reading lens over lines of text, one line highlighted (Focus).
+       Refines the 1.x magnifier: transparent background, white lens so it reads on light and dark toolbars.
+       Chrome guidance: about 96×96 artwork centred on a 128×128 canvas. -->
+  <path d="M77 77 L101 101" stroke="#1E3A78" stroke-width="15" stroke-linecap="round"/>
+  <circle cx="54" cy="54" r="31" fill="#FFFFFF" stroke="#2F5BB7" stroke-width="11"/>
+  <rect x="36" y="48.5" width="36" height="11" rx="5.5" fill="#F2C14E"/>
+  <path d="M41 42 H67 M41 54 H67 M41 66 H58" stroke="#1E3A78" stroke-width="5.5" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>calm</title>
+<style>html{scroll-behavior:smooth}body{font:16px/1.4 sans-serif;max-width:720px;margin:auto}
+@keyframes spin{to{transform:rotate(360deg)}}.spinner{width:20px;height:20px;border:3px solid #06c;border-right-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes fadein{from{opacity:0}to{opacity:1}}#fade{animation:fadein 2s ease 0.5s both}
+#menu{max-height:0;overflow:hidden;transition:max-height .4s ease}#menu.open{max-height:200px}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}#dlg.closing{animation:pop .3s reverse forwards}
+.spacer{height:2000px}</style></head><body>
+<div class="spinner" id="spinner"></div>
+<p id="fade">This paragraph fades in with a CSS animation; it must never stay invisible.</p>
+<button id="menuBtn" aria-expanded="false">Menu</button><ul id="menu"><li>Menu item one with text</li></ul>
+<dialog id="dlg" open><p>Dialog that closes after its exit animation finishes.</p><button id="dlgClose">Close</button></dialog>
+<video id="vid" autoplay muted playsinline width="160" height="90"></video>
+<a href="#bottom" id="jump">Jump to bottom</a><div class="spacer"></div><p id="bottom">Bottom of the page target paragraph text.</p>
+<script>
+const m=document.getElementById('menu'),b=document.getElementById('menuBtn');
+b.onclick=()=>{m.classList.add('open');m.addEventListener('transitionend',()=>{b.setAttribute('aria-expanded','true');},{once:true});};
+const d=document.getElementById('dlg');document.getElementById('dlgClose').onclick=()=>{d.classList.add('closing');d.addEventListener('animationend',()=>d.close(),{once:true});};
+const c=document.createElement('canvas');c.width=16;c.height=16;const x=c.getContext('2d');let t=0;setInterval(()=>{x.fillStyle='hsl('+(t+=20)+',80%,50%)';x.fillRect(0,0,16,16)},50);
+const v=document.getElementById('vid');v.srcObject=c.captureStream(20);v.play().catch(()=>{});
+</script></body></html>

@@ -1,0 +1,634 @@
+/*
+ * ReadScore popup, "Paper" direction. Tokens only (tests/unit/styles.test.ts).
+ * Structure: flat full width sections separated by hairline dividers; no cards, no shadows.
+ * Horizontal rhythm: every section uses the same gutter (--rs-gutter), so text, controls and
+ * dividers line up on one left and one right edge.
+ *
+ * Documented exceptions
+ *   - `1lh` (one line of the element's own text) vertically centres 1 line controls (checkbox,
+ *     message icon) on the first text line at any text size. It is a relative unit, not a magic number.
+ *   - Unitless multipliers inside calc() (−1, 2) only invert or halve tokens.
+ */
+
+/* ───────────────────────── Base ───────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  background: var(--rs-bg);
+}
+
+body {
+  margin: 0;
+  width: var(--rs-popup-width);
+  max-width: 100%;
+  background: var(--rs-bg);
+  color: var(--rs-text);
+  font: var(--rs-weight-regular) var(--rs-text-md) / var(--rs-leading) var(--rs-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+p,
+h1,
+h2,
+dl,
+dd {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: var(--rs-focus-width) solid var(--rs-focus-ring);
+  outline-offset: var(--rs-focus-offset);
+}
+
+.rs-icon {
+  width: var(--rs-icon-md);
+  height: var(--rs-icon-md);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rs-icon--dots {
+  stroke-width: 3;
+}
+
+.rs-icon--sm {
+  width: var(--rs-icon-sm);
+  height: var(--rs-icon-sm);
+}
+
+/* ───────────────────────── Header ───────────────────────── */
+.rs-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--rs-space-3);
+  padding: var(--rs-space-4) var(--rs-gutter);
+}
+
+.rs-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-space-1);
+}
+
+.rs-header__site {
+  margin-top: var(--rs-space-1);
+  color: var(--rs-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.rs-header__title {
+  font-size: var(--rs-text-xl);
+  font-weight: var(--rs-weight-strong);
+  line-height: var(--rs-leading-tight);
+}
+
+/* ───────────────────────── Settings menu (inline panel) ───────────────────────── */
+.rs-menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-4);
+  padding: var(--rs-space-4) var(--rs-gutter);
+  border-top: var(--rs-border-width) solid var(--rs-border);
+}
+
+/* ───────────────────────── Messages ───────────────────────── */
+/* Messages span the full width like every other divider; only their content sits in the gutter. */
+.rs-messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.rs-message {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--rs-space-2) var(--rs-space-3);
+  padding: var(--rs-space-3) var(--rs-gutter);
+  border-top: var(--rs-border-width) solid var(--rs-border);
+}
+
+.rs-message > .rs-icon {
+  margin-top: calc((1lh - var(--rs-icon-md)) / 2);
+}
+
+.rs-message--info > .rs-icon {
+  color: var(--rs-info);
+}
+
+.rs-message--warning > .rs-icon {
+  color: var(--rs-warning);
+}
+
+.rs-message--danger > .rs-icon {
+  color: var(--rs-danger);
+}
+
+.rs-message--success > .rs-icon {
+  color: var(--rs-success);
+}
+
+.rs-message--quiet,
+.rs-message--quiet > .rs-icon {
+  color: var(--rs-text-muted);
+}
+
+/* A message inside a mode body: no divider or gutter of its own (the body already provides both). */
+.rs-message--inline {
+  padding: 0;
+  border-top: 0;
+}
+
+.rs-message__text {
+  align-self: center;
+}
+
+.rs-message > .rs-button {
+  margin-block: calc((var(--rs-control-h) - 1lh) / -2);
+}
+
+/* ───────────────────────── Mode sections ───────────────────────── */
+.rs-mode {
+  padding: var(--rs-space-4) var(--rs-gutter);
+  border-top: var(--rs-border-width) solid var(--rs-border);
+}
+
+.rs-mode__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--rs-space-3);
+}
+
+.rs-mode__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--rs-space-2);
+  font-size: var(--rs-text-lg);
+  font-weight: var(--rs-weight-strong);
+  line-height: var(--rs-leading-tight);
+}
+
+.rs-mode__state {
+  color: var(--rs-text-muted);
+  font-size: var(--rs-text-md);
+  font-weight: var(--rs-weight-regular);
+}
+
+.rs-mode--on .rs-mode__state {
+  color: var(--rs-accent);
+  font-weight: var(--rs-weight-medium);
+}
+
+/* Unavailable page: the saved state stays visible but no longer reads as active. */
+.rs-mode--unavailable .rs-mode__state {
+  color: var(--rs-text-muted);
+}
+
+.rs-mode__desc {
+  margin-top: var(--rs-space-1);
+  color: var(--rs-text-muted);
+}
+
+.rs-mode__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--rs-space-2);
+}
+
+.rs-mode__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-4);
+  padding-top: var(--rs-space-4);
+}
+
+/* A run of related fields inside a mode body (same gap as the body itself, no indent: one column width). */
+.rs-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-4);
+}
+
+/* ───────────────────────── Switch ───────────────────────── */
+.rs-switch {
+  position: relative;
+  flex: none;
+  width: var(--rs-switch-w);
+  height: var(--rs-switch-h);
+  padding: 0;
+  border: var(--rs-border-width) solid var(--rs-border-control);
+  border-radius: var(--rs-radius-full);
+  background: var(--rs-surface-sunken);
+  cursor: pointer;
+  transition: background-color var(--rs-duration-fast) var(--rs-ease), border-color var(--rs-duration-fast) var(--rs-ease);
+}
+
+.rs-switch__thumb {
+  position: absolute;
+  top: calc((var(--rs-switch-h) - var(--rs-switch-thumb)) / 2 - var(--rs-border-width));
+  left: calc((var(--rs-switch-h) - var(--rs-switch-thumb)) / 2 - var(--rs-border-width));
+  display: grid;
+  place-items: center;
+  width: var(--rs-switch-thumb);
+  height: var(--rs-switch-thumb);
+  border-radius: var(--rs-radius-full);
+  background: var(--rs-border-control);
+  color: var(--rs-accent);
+  transition: transform var(--rs-duration-fast) var(--rs-ease);
+}
+
+.rs-switch__thumb .rs-icon {
+  width: 100%;
+  height: 100%;
+  stroke-width: 3;
+  visibility: hidden;
+}
+
+.rs-switch[aria-checked='true'] {
+  border-color: var(--rs-accent);
+  background: var(--rs-accent);
+}
+
+.rs-switch[aria-checked='true'] .rs-switch__thumb {
+  background: var(--rs-on-accent);
+  transform: translateX(calc(var(--rs-switch-w) - var(--rs-switch-h)));
+}
+
+.rs-switch[aria-checked='true'] .rs-switch__thumb .rs-icon {
+  visibility: visible;
+}
+
+.rs-switch:disabled {
+  border-color: var(--rs-text-disabled);
+  background: var(--rs-bg);
+  cursor: not-allowed;
+}
+
+.rs-switch:disabled .rs-switch__thumb {
+  background: var(--rs-text-disabled);
+}
+
+/* ───────────────────────── Buttons ───────────────────────── */
+.rs-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rs-space-2);
+  min-height: var(--rs-control-h);
+  padding: 0 var(--rs-space-3);
+  border: var(--rs-border-width) solid transparent;
+  border-radius: var(--rs-radius-md);
+  background: transparent;
+  font-weight: var(--rs-weight-medium);
+  line-height: var(--rs-leading-tight);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--rs-duration-fast) var(--rs-ease);
+}
+
+.rs-button--primary {
+  background: var(--rs-accent);
+  color: var(--rs-on-accent);
+}
+
+.rs-button--secondary {
+  border-color: var(--rs-border-control);
+  background: var(--rs-surface);
+}
+
+.rs-button--secondary:hover:not(:disabled) {
+  background: var(--rs-surface-sunken);
+}
+
+.rs-button--quiet {
+  color: var(--rs-accent);
+}
+
+/* Quiet actions never show a box or underline on hover: only the label and icon change colour. */
+.rs-button--quiet:hover:not(:disabled) {
+  color: var(--rs-text);
+}
+
+.rs-button:disabled {
+  border-color: transparent;
+  background: transparent;
+  color: var(--rs-text-disabled);
+  cursor: not-allowed;
+}
+
+.rs-button--secondary:disabled {
+  border-color: var(--rs-border);
+}
+
+.rs-button--block {
+  width: 100%;
+}
+
+.rs-icon-button {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--rs-control-h);
+  height: var(--rs-control-h);
+  padding: 0;
+  border: 0;
+  border-radius: var(--rs-radius-md);
+  background: transparent;
+  color: var(--rs-text-muted);
+  cursor: pointer;
+  transition: background-color var(--rs-duration-fast) var(--rs-ease);
+}
+
+.rs-icon-button:hover {
+  background: var(--rs-surface-sunken);
+  color: var(--rs-text);
+}
+
+.rs-icon-button--sm {
+  width: var(--rs-hit-min);
+  height: var(--rs-hit-min);
+  border-radius: var(--rs-radius-sm);
+}
+
+.rs-icon-button[aria-expanded='true'] {
+  color: var(--rs-text);
+}
+
+.rs-disclosure .rs-icon {
+  transition: transform var(--rs-duration-base) var(--rs-ease);
+}
+
+.rs-disclosure[aria-expanded='true'] .rs-icon {
+  transform: rotate(180deg);
+}
+
+/* ───────────────────────── Fields ───────────────────────── */
+.rs-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rs-field__label {
+  display: block;
+  margin-bottom: var(--rs-space-2);
+  padding: 0;
+  font-weight: var(--rs-weight-medium);
+}
+
+.rs-help {
+  color: var(--rs-text-muted);
+}
+
+/* Help that explains the field right above it sits closer to it than the regular field gap. */
+.rs-help--attached {
+  margin-top: calc(var(--rs-space-3) * -1);
+}
+
+/* Segmented control: native radios over the option labels. */
+.rs-segmented__track {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: var(--rs-space-1);
+  padding: var(--rs-space-1);
+  border: var(--rs-border-width) solid var(--rs-border);
+  border-radius: var(--rs-radius-lg);
+  background: var(--rs-surface-sunken);
+}
+
+.rs-segmented__option {
+  position: relative;
+  display: grid;
+}
+
+.rs-segmented__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.rs-segmented__label {
+  display: grid;
+  place-items: center;
+  min-height: calc(var(--rs-control-h) - var(--rs-space-2));
+  padding: var(--rs-space-1) var(--rs-space-2);
+  border: var(--rs-border-width) solid transparent;
+  border-radius: var(--rs-radius-md);
+  color: var(--rs-text-muted);
+  line-height: var(--rs-leading-tight);
+  text-align: center;
+  transition: background-color var(--rs-duration-fast) var(--rs-ease);
+}
+
+.rs-segmented__input:hover + .rs-segmented__label {
+  color: var(--rs-text);
+}
+
+.rs-segmented__input:checked + .rs-segmented__label {
+  border-color: var(--rs-border-control);
+  background: var(--rs-surface);
+  color: var(--rs-text);
+  font-weight: var(--rs-weight-medium);
+}
+
+.rs-segmented__input:focus-visible + .rs-segmented__label {
+  outline: var(--rs-focus-width) solid var(--rs-focus-ring);
+  outline-offset: var(--rs-focus-offset);
+}
+
+.rs-segmented:disabled .rs-segmented__label {
+  color: var(--rs-text-disabled);
+}
+
+/* Select */
+.rs-select-wrap {
+  position: relative;
+}
+
+.rs-select-wrap__chevron {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: var(--rs-control-h);
+  color: var(--rs-text-muted);
+  pointer-events: none;
+}
+
+.rs-select {
+  width: 100%;
+  min-height: var(--rs-control-h);
+  padding: 0 var(--rs-control-h) 0 var(--rs-space-3);
+  appearance: none;
+  border: var(--rs-border-width) solid var(--rs-border-control);
+  border-radius: var(--rs-radius-md);
+  background: var(--rs-surface);
+  cursor: pointer;
+}
+
+/* Checkbox row */
+.rs-check {
+  display: grid;
+  grid-template-columns: var(--rs-check-size) 1fr;
+  gap: var(--rs-space-3);
+}
+
+.rs-check__input {
+  width: var(--rs-check-size);
+  height: var(--rs-check-size);
+  margin: calc((1lh - var(--rs-check-size)) / 2) 0 0;
+  accent-color: var(--rs-accent);
+  cursor: pointer;
+}
+
+.rs-check__label {
+  font-weight: var(--rs-weight-medium);
+  cursor: pointer;
+}
+
+.rs-check--disabled .rs-check__label,
+.rs-check--disabled .rs-help {
+  color: var(--rs-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Slider: label · value · reset on one line, the range below it. */
+.rs-slider {
+  display: grid;
+  grid-template-columns: 1fr var(--rs-value-w) var(--rs-hit-min);
+  align-items: center;
+  gap: var(--rs-space-1) var(--rs-space-2);
+}
+
+.rs-slider__label {
+  font-weight: var(--rs-weight-medium);
+}
+
+.rs-slider__value {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.rs-slider .rs-icon-button[data-visible='false'] {
+  visibility: hidden;
+}
+
+.rs-slider__input {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
+  accent-color: var(--rs-accent);
+  cursor: pointer;
+}
+
+/* Disclosure row: label on the text edge, chevron in the mode chevron column (same width as the icon buttons). */
+.rs-advanced__summary {
+  display: grid;
+  grid-template-columns: 1fr var(--rs-control-h);
+  align-items: center;
+  gap: var(--rs-space-3);
+  min-height: var(--rs-control-h);
+  border-radius: var(--rs-radius-md);
+  font-weight: var(--rs-weight-medium);
+  list-style: none;
+  cursor: pointer;
+}
+
+.rs-advanced__summary--action {
+  grid-template-columns: 1fr auto var(--rs-control-h);
+}
+
+.rs-advanced__summary::-webkit-details-marker {
+  display: none;
+}
+
+.rs-advanced__chevron {
+  display: grid;
+  place-items: center;
+  color: var(--rs-text-muted);
+}
+
+.rs-advanced__chevron .rs-icon {
+  transition: transform var(--rs-duration-base) var(--rs-ease);
+}
+
+.rs-advanced[open] .rs-advanced__chevron .rs-icon {
+  transform: rotate(180deg);
+}
+
+.rs-advanced__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rs-space-4);
+  padding-top: var(--rs-space-3);
+}
+
+/* Keyboard shortcut list */
+.rs-keys {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--rs-space-2) var(--rs-space-3);
+}
+
+/* Keys share one column width (the widest key), so the descriptions line up. */
+.rs-keys > dt {
+  display: grid;
+}
+
+.rs-kbd {
+  display: grid;
+  place-items: center;
+  min-width: var(--rs-control-h);
+  padding: 0 var(--rs-space-2);
+  border: var(--rs-border-width) solid var(--rs-border-control);
+  border-radius: var(--rs-radius-sm);
+  background: var(--rs-surface);
+  font: var(--rs-weight-medium) var(--rs-text-sm) / var(--rs-leading) var(--rs-font);
+}
+
+/* ───────────────────────── Forced colours (Windows High Contrast) ───────────────────────── */
+@media (forced-colors: active) {
+  .rs-switch__thumb {
+    background: CanvasText;
+  }
+
+  .rs-switch[aria-checked='true'] {
+    background: Highlight;
+  }
+
+  .rs-switch[aria-checked='true'] .rs-switch__thumb {
+    background: HighlightText;
+  }
+
+  .rs-segmented__input:checked + .rs-segmented__label {
+    border-color: Highlight;
+  }
+}

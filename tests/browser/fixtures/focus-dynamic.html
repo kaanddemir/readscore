@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>focus-dynamic</title><style>body{font:16px/1.5 sans-serif;max-width:680px;margin:auto}</style></head><body><main id="feed">
+<p id="d1">Initial item 1. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d2">Initial item 2. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d3">Initial item 3. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d4">Initial item 4. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d5">Initial item 5. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d6">Initial item 6. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d7">Initial item 7. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d8">Initial item 8. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d9">Initial item 9. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d10">Initial item 10. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d11">Initial item 11. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+<p id="d12">Initial item 12. Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>
+</main><script>let n=0;window.addItems=(k)=>{for(let i=0;i<k;i++){const p=document.createElement("p");p.textContent="Streamed item "+(++n)+". Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.";document.getElementById("feed").append(p);}};
+window.flood=(ms)=>new Promise(r=>{const t0=performance.now();let c=0;const tick=()=>{for(let i=0;i<10;i++){const s=document.createElement("span");s.textContent=String(c++);document.body.append(s);s.remove();}if(performance.now()-t0<ms)setTimeout(tick,1);else r(c);};tick();});
+window.spa=()=>{document.getElementById("feed").innerHTML="<h1>New route</h1>"+Array.from({length:8},(_,i)=>"<p>Route two paragraph "+(i+1)+". Reading on screen is easier when the text has room to breathe and the reader can keep their place without effort.</p>").join("");history.pushState({}, "", "#two");};</script></body></html>

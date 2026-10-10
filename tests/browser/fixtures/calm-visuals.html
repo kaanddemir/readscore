@@ -1,0 +1,56 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>calm visuals</title>
+<style>
+body{font:16px/1.5 sans-serif;max-width:760px;margin:0 auto;padding-top:56px}
+#bar{position:fixed;top:0;left:0;right:0;height:44px;background:#fff;border-bottom:1px solid #ccc;display:flex;align-items:center;gap:8px;padding:0 8px;z-index:5}
+.card{position:relative;width:300px}.card a.cover{position:absolute;inset:0}
+#hero{height:180px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='6' height='12' fill='%23c03'/%3E%3C/svg%3E");color:#fff;font-size:28px;padding:20px}
+#deco{width:240px;height:120px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect width='6' height='12' fill='%2306c'/%3E%3C/svg%3E")}
+.ok{background:#1a7f37;color:#fff;padding:8px}.err{background:#d1242f;color:#fff;padding:8px}
+@keyframes wob{to{transform:translateX(20px)}}
+.spacer{height:1200px}
+</style></head><body>
+<div id="bar"><img data-expect="keep" alt="logo" width="32" height="32" class="stripes">
+  <button id="menu" aria-label="Menu"><svg data-expect="keep" width="20" height="20" viewBox="0 0 20 20"><path d="M2 5h16M2 10h16M2 15h16" stroke="#000"/></svg></button>
+  <img data-expect="keep" id="wordmark" alt="Company wordmark" width="200" height="40" class="stripes"></div>
+<main>
+<h1>Calm visuals fixture</h1>
+<p>Body paragraph near the photo, used for the combined Focus highlight check under grayscale.</p>
+<img id="photo" data-expect="blur" alt="Photo" width="480" height="270" class="stripes">
+<figure><svg id="diagram" data-expect="blur" width="400" height="200" viewBox="0 0 400 200"><rect x="10" y="10" width="120" height="60" fill="#06c"/><rect x="200" y="100" width="120" height="60" fill="#c60"/><path d="M130 40 L200 130" stroke="#000" stroke-width="3"/><text x="20" y="45" fill="#fff">Diagram node</text></svg><figcaption>A diagram: essential, but indistinguishable from decoration by markup.</figcaption></figure>
+<p><a id="thumbLink" href="#t"><img id="thumb" data-expect="blur" alt="Linked thumbnail" width="160" height="120" class="stripes"></a></p>
+<div class="card"><img id="cardImg" data-expect="blur" alt="Card image" width="300" height="160" class="stripes"><a class="cover" id="cover" href="#card" aria-label="Open card"></a></div>
+<div id="hero" data-expect="keep-limitation">Hero text on a background image</div>
+<div id="deco" data-expect="blur"></div>
+<p><img data-expect="keep" alt="avatar" width="40" height="40" class="stripes"> Avatar next to text.</p>
+<button id="imgBtn" style="padding:0"><img data-expect="keep" alt="Play" width="64" height="64" class="stripes"></button>
+<form id="f" onsubmit="event.preventDefault();document.getElementById('res').textContent='submitted'"><input name="q" value="x"><input id="imgSubmit" data-expect="keep" type="image" alt="Search" width="80" height="80" src=""></form><p id="res"></p>
+<canvas id="chart" data-expect="blur" width="300" height="150"></canvas>
+<div class="ok" id="ok">Success: your changes were saved.</div><div class="err" id="err">Error: the payment failed.</div>
+<div id="waapi" style="width:30px;height:30px;background:#06c"></div>
+<div id="lazySlot"></div>
+<div id="host"></div>
+<video id="vid" muted autoplay playsinline width="160" height="90"></video>
+<div class="spacer"></div>
+</main>
+<script>
+const stripes = "data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='480' height='270'><defs><pattern id='p' width='8' height='8' patternUnits='userSpaceOnUse'><rect width='4' height='8' fill='#222'/><rect x='4' width='4' height='8' fill='#e33'/></pattern></defs><rect width='100%' height='100%' fill='url(#p)'/></svg>");
+for (const i of document.querySelectorAll('img.stripes, img:not([src])')) i.src = stripes;
+document.getElementById('imgSubmit').src = stripes;
+const cx = document.getElementById('chart').getContext('2d');
+for (let i = 0; i < 30; i++) { cx.fillStyle = i % 2 ? '#d1242f' : '#1a7f37'; cx.fillRect(i * 10, 150 - (i * 37) % 140, 8, 150); }
+document.getElementById('waapi').animate([{ transform: 'none' }, { transform: 'translateX(60px)' }], { duration: 1000, iterations: Infinity });
+// Lazy image arrives later (like loading=lazy / infinite scroll).
+setTimeout(() => { const i = new Image(320, 180); i.id = 'lazy'; i.dataset.expect = 'blur'; i.alt = 'Lazy'; i.src = stripes; document.getElementById('lazySlot').append(i); }, 600);
+// Shadow DOM image + autoplaying video inside a shadow root.
+const sr = document.getElementById('host').attachShadow({ mode: 'open' });
+sr.innerHTML = '<img id="shadowImg" alt="Shadow image" width="300" height="160"><video id="shadowVid" muted autoplay playsinline width="120" height="68"></video>';
+sr.getElementById('shadowImg').src = stripes;
+const c = document.createElement('canvas'); c.width = 16; c.height = 16; const x = c.getContext('2d'); let t = 0;
+setInterval(() => { x.fillStyle = 'hsl(' + (t += 20) + ',80%,50%)'; x.fillRect(0, 0, 16, 16); }, 50);
+for (const v of [document.getElementById('vid'), sr.getElementById('shadowVid')]) { v.srcObject = c.captureStream(20); v.play().catch(() => {}); }
+// A video inserted after load that autoplays (dynamic media).
+setTimeout(() => { const v = document.createElement('video'); v.id = 'lateVid'; v.muted = true; v.width = 120; v.height = 68; v.srcObject = c.captureStream(20); document.querySelector('main').append(v); v.play().catch(() => {}); }, 900);
+// User-initiated playback: a site button that plays the main video.
+const pb = document.createElement('button'); pb.id = 'playBtn'; pb.textContent = 'Play video'; pb.onclick = () => document.getElementById('vid').play(); document.querySelector('main').append(pb);
+document.getElementById('menu').onclick = () => document.getElementById('menu').setAttribute('aria-expanded', 'true');
+</script></body></html>

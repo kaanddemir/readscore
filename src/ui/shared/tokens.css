@@ -1,0 +1,158 @@
+/*
+ * ReadScore design tokens, "Paper" direction (Phase 2B).
+ * The ONLY file where raw values (colours, lengths, durations) may appear; component CSS uses
+ * var(--rs-*) exclusively and tests/unit/styles.test.ts enforces it.
+ *
+ * Layers
+ *   1. Primitives (--rs-p-*): palette and raw scales. Components never use these directly.
+ *   2. Semantic   (--rs-*):   meaning based tokens. Themes remap only this layer.
+ *
+ * Units: rem for type, spacing and control sizes (the popup follows Chrome's font size setting);
+ * px only for hairline borders and the focus ring, which must stay crisp at every text size.
+ *
+ * Contrast (checked by tests/unit/contrast.test.ts, WCAG 2.2 AA):
+ *   text, text-muted, accent, danger, warning, success on bg AND surface ≥ 4.5:1
+ *   on-accent on accent ≥ 4.5:1;  border-control and focus-ring on bg ≥ 3:1 (SC 1.4.11)
+ */
+:root {
+  color-scheme: light;
+
+  /* ───── 1. Primitives ───── */
+  --rs-p-paper-0: #ffffff;
+  --rs-p-paper-50: #faf8f5;
+  --rs-p-paper-100: #f1eee9;
+  --rs-p-paper-200: #e2ded7;
+  --rs-p-paper-500: #857f75;
+  --rs-p-paper-600: #5c5850;
+  --rs-p-paper-700: #9a958c;
+  --rs-p-ink-50: #ecedee;
+  --rs-p-ink-300: #a9adb4;
+  --rs-p-ink-400: #7a7e86;
+  --rs-p-ink-500: #5f636b;
+  --rs-p-ink-700: #2e3034;
+  --rs-p-ink-800: #1c1d20;
+  --rs-p-ink-900: #141517;
+  --rs-p-ink-950: #0f1012;
+  --rs-p-ink-text: #1b1c1e;
+  --rs-p-blue-300: #8eb0ff;
+  --rs-p-blue-600: #2f5bb7;
+  --rs-p-red-300: #ff9b93;
+  --rs-p-red-700: #b3261e;
+  --rs-p-amber-300: #f2c14e;
+  --rs-p-amber-800: #845500;
+  --rs-p-green-300: #8fd19a;
+  --rs-p-green-700: #276b2b;
+
+  /* ───── 2. Semantic: colour (light theme) ───── */
+  --rs-bg: var(--rs-p-paper-50);
+  --rs-surface: var(--rs-p-paper-0);
+  --rs-surface-sunken: var(--rs-p-paper-100);
+  --rs-border: var(--rs-p-paper-200);
+  --rs-border-control: var(--rs-p-paper-500);
+  --rs-text: var(--rs-p-ink-text);
+  --rs-text-muted: var(--rs-p-paper-600);
+  --rs-text-disabled: var(--rs-p-paper-700);
+  --rs-accent: var(--rs-p-blue-600);
+  --rs-on-accent: var(--rs-p-paper-0);
+  --rs-focus-ring: var(--rs-p-blue-600);
+  --rs-danger: var(--rs-p-red-700);
+  --rs-warning: var(--rs-p-amber-800);
+  --rs-success: var(--rs-p-green-700);
+  --rs-info: var(--rs-p-blue-600);
+
+  /* ───── Typography (system UI; scale 12 / 14 / 16 / 20) ───── */
+  --rs-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --rs-text-sm: 0.75rem;
+  --rs-text-md: 0.875rem;
+  --rs-text-lg: 1rem;
+  --rs-text-xl: 1.25rem;
+  --rs-weight-regular: 400;
+  --rs-weight-medium: 500;
+  --rs-weight-strong: 600;
+  --rs-leading-tight: 1.25;
+  --rs-leading: 1.5;
+
+  /* ───── Spacing (4px grid) ───── */
+  --rs-space-1: 0.25rem;
+  --rs-space-2: 0.5rem;
+  --rs-space-3: 0.75rem;
+  --rs-space-4: 1rem;
+
+  /* ───── Shape ───── */
+  --rs-radius-sm: 0.25rem;
+  --rs-radius-md: 0.375rem;
+  --rs-radius-lg: 0.5rem;
+  --rs-radius-full: 62.5rem;
+  --rs-border-width: 1px;
+  --rs-focus-width: 2px;
+  --rs-focus-offset: 2px;
+
+  /* ───── Controls ───── */
+  --rs-control-h: 2rem;          /* buttons, selects, segmented controls */
+  --rs-hit-min: 1.5rem;          /* WCAG 2.5.8 target minimum (24px at default size) */
+  --rs-switch-w: 2.75rem;        /* 44×24: meets the 24px target minimum by itself */
+  --rs-switch-h: 1.5rem;
+  --rs-switch-thumb: 1.125rem;
+  --rs-check-size: 1rem;
+  --rs-value-w: 3.5rem;          /* slider value column: fits "0.24 em" at every text size */
+
+  /* ───── Icons (inline SVG, 24 unit viewBox, stroke 1.75, round caps) ───── */
+  --rs-icon-sm: 1rem;
+  --rs-icon-md: 1.25rem;
+
+  /* ───── Layout ───── */
+  --rs-popup-width: 22.5rem;     /* 360px at default size; Chrome caps popups at 800×600 */
+  --rs-gutter: var(--rs-space-4);
+
+  /* ───── Motion ───── */
+  --rs-duration-fast: 120ms;
+  --rs-duration-base: 180ms;
+  --rs-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Dark theme: follows the system unless the user picked Light; or forced with data-theme="dark". */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --rs-bg: var(--rs-p-ink-900);
+    --rs-surface: var(--rs-p-ink-800);
+    --rs-surface-sunken: var(--rs-p-ink-950);
+    --rs-border: var(--rs-p-ink-700);
+    --rs-border-control: var(--rs-p-ink-400);
+    --rs-text: var(--rs-p-ink-50);
+    --rs-text-muted: var(--rs-p-ink-300);
+    --rs-text-disabled: var(--rs-p-ink-500);
+    --rs-accent: var(--rs-p-blue-300);
+    --rs-on-accent: var(--rs-p-ink-950);
+    --rs-focus-ring: var(--rs-p-blue-300);
+    --rs-danger: var(--rs-p-red-300);
+    --rs-warning: var(--rs-p-amber-300);
+    --rs-success: var(--rs-p-green-300);
+    --rs-info: var(--rs-p-blue-300);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --rs-bg: var(--rs-p-ink-900);
+  --rs-surface: var(--rs-p-ink-800);
+  --rs-surface-sunken: var(--rs-p-ink-950);
+  --rs-border: var(--rs-p-ink-700);
+  --rs-border-control: var(--rs-p-ink-400);
+  --rs-text: var(--rs-p-ink-50);
+  --rs-text-muted: var(--rs-p-ink-300);
+  --rs-text-disabled: var(--rs-p-ink-500);
+  --rs-accent: var(--rs-p-blue-300);
+  --rs-on-accent: var(--rs-p-ink-950);
+  --rs-focus-ring: var(--rs-p-blue-300);
+  --rs-danger: var(--rs-p-red-300);
+  --rs-warning: var(--rs-p-amber-300);
+  --rs-success: var(--rs-p-green-300);
+  --rs-info: var(--rs-p-blue-300);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --rs-duration-fast: 0ms;
+    --rs-duration-base: 0ms;
+  }
+}

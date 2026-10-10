@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>shadow</title></head><body>
+<main><p data-expect="focus">Light DOM paragraph before the web components appear on the page.</p>
+<x-open></x-open><x-closed></x-closed>
+<p data-expect="focus">Light DOM paragraph after the web components on this test page.</p></main>
+<script>
+customElements.define('x-open', class extends HTMLElement { connectedCallback(){ const r=this.attachShadow({mode:'open'});
+  r.innerHTML='<p data-expect="focus">Paragraph inside an OPEN shadow root, reachable by the extension.</p><x-inner></x-inner>'; }});
+customElements.define('x-inner', class extends HTMLElement { connectedCallback(){ this.attachShadow({mode:'open'}).innerHTML='<p data-expect="focus">Paragraph inside a NESTED open shadow root, two levels deep.</p>'; }});
+customElements.define('x-closed', class extends HTMLElement { connectedCallback(){ this.attachShadow({mode:'closed'}).innerHTML='<p>Paragraph inside a CLOSED shadow root: invisible to extensions by design.</p>'; }});
+</script></body></html>

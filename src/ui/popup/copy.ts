@@ -1,0 +1,92 @@
+/**
+ * Every user facing string in the popup. Rules (tests/unit/copy.test.ts): short plain English,
+ * no hyphens and no dashes, mode descriptions of 2 to 6 words, help lines of at most 8 words.
+ */
+export const COPY = {
+  appName: 'ReadScore',
+  moreLabel: 'Settings',
+  connecting: 'Connecting',
+
+  restricted: 'Not available on this page.',
+  restrictedSite: 'Browser Page',
+  errors: {
+    NOT_INJECTED: 'Reload the page.',
+    INVALID_MESSAGE: 'Something went wrong. Reload the page.',
+    INTERNAL: 'Something went wrong. Reload the page.',
+    RESTRICTED_PAGE: 'Not available on this page.',
+    SAVE: 'Could not save. Try again.',
+    COMFORT: 'Could not apply Comfort.',
+    CALM: 'Could not apply Calm.',
+    FOCUS: 'Could not apply Focus.',
+    FOCUS_UNSUPPORTED: 'Focus needs a newer Chrome.',
+  },
+  retry: 'Try Again',
+
+  on: 'On',
+  off: 'Off',
+  notApplied: 'Not Applied',
+  modeSettings: (mode: string) => `${mode} Settings`,
+
+  focus: {
+    name: 'Focus',
+    description: 'Highlight one paragraph.',
+    paused: 'Paused',
+    noText: 'No Text',
+    empty: 'No paragraphs found on this page.',
+    pause: 'Pause',
+    resume: 'Resume',
+    moveWith: 'Move With',
+    keyboard: 'Keyboard',
+    scroll: 'Follow Scroll',
+    color: 'Highlight',
+    colors: { yellow: 'Yellow', blue: 'Blue', green: 'Green', dark: 'Dark' },
+    shortcutsTitle: 'Shortcuts',
+    shortcuts: [
+      ['J', 'Next Paragraph'],
+      ['K', 'Previous Paragraph'],
+      ['Esc', 'Pause'],
+    ] as const,
+    scrollHelp: 'Follows the middle of the screen. Esc pauses.',
+  },
+
+  comfort: {
+    name: 'Comfort',
+    description: 'Adjust text and spacing.',
+    spacing: 'Spacing',
+    presets: { site: 'Site', relaxed: 'Relaxed', roomy: 'Roomy', custom: 'Custom' },
+    customHelp: 'Sliders switch to Custom.',
+    font: 'Font',
+    fonts: { site: 'Site Default', sans: 'Sans Serif', serif: 'Serif', atkinson: 'Atkinson Hyperlegible' },
+    minSize: 'Text Size',
+    minSizes: { off: 'Site', '18': '18 px', '20': '20 px', '22': '22 px' },
+    minSizeHelp: 'Small text grows. May cut off labels.',
+    advanced: 'Adjust Spacing',
+    lineHeight: 'Line Height',
+    letterSpacing: 'Letter Spacing',
+    wordSpacing: 'Word Spacing',
+    paragraphSpacing: 'Paragraph Spacing',
+    resetOne: (label: string) => `Reset ${label}`,
+    resetAll: 'Reset Comfort',
+  },
+
+  calm: {
+    name: 'Calm',
+    description: 'Reduce distractions.',
+    reduceMotion: 'Reduce Motion',
+    reduceMotionHelp: 'Also pauses background videos.',
+    blur: 'Blur Images',
+    blurHelp: 'Hover or Tab to reveal an image.',
+    strength: 'Strength',
+    strengths: { light: 'Light', strong: 'Strong' },
+    showAll: 'Show All Images',
+    blurAgain: 'Blur Again',
+  },
+
+  menu: {
+    theme: 'Theme',
+    themes: { system: 'System', light: 'Light', dark: 'Dark' },
+    resetAll: 'Reset All',
+    resetDone: 'Settings reset.',
+    undo: 'Undo',
+  },
+} as const;

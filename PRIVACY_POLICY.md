@@ -1,94 +1,66 @@
-# Privacy Policy
+# ReadScore Privacy Policy
 
-**Last Updated:** March 21, 2026
+Last updated: October 10, 2026 · Applies to ReadScore 2.0.0
 
-## ReadScore Chrome Extension
-
-## Overview
-
-ReadScore is a privacy-first Chrome extension for readability analysis, on-page reading tools, and AI-assisted summaries. The extension is designed to work locally inside your browser and does not run its own backend.
-
-## What We Collect
-
-**We do not collect personal data.**
-
-ReadScore does not:
-- collect browsing history
-- collect page content on our servers
-- collect IP addresses or device identifiers
-- use analytics, tracking pixels, or cookies
-
-## What Is Processed Locally
-
-When you use the extension, the following actions happen locally in your browser:
-
-- page text extraction for readability analysis
-- selected text extraction for selection analysis
-- Focus Mode content extraction for the reader overlay
-- AI Summary input preparation for supported browsers
-
-These operations are performed in the active tab and are not sent to a ReadScore server because ReadScore does not operate one.
-
-## AI Summary
-
-ReadScore can use Chrome's built-in summarizer feature when it is available in the browser.
-
-- ReadScore does not send page content to a ReadScore server
-- summary generation depends on the browser environment and Chrome's built-in AI availability
-- summary settings are stored locally
-- generated summaries are shown on the page until you close the summary panel or leave the page
-
-## Local Storage
-
-ReadScore stores a small amount of preference data with `chrome.storage.local`.
-
-This can include:
-- reading tool toggle states such as Focus Mode, Tracking Assist, and Reading Guide
-- AI Summary preferences such as summary type and summary length
-
-This data remains on your device and is not transmitted to us.
-
-## Permissions
-
-ReadScore requests only the permissions needed to function:
-
-| Permission | Purpose |
-| :--- | :--- |
-| `activeTab` | Allows the extension to access the current page only when you interact with the extension |
-| `scripting` | Allows ReadScore to inject its local content, reader, and summary scripts into the active page |
-| `storage` | Saves your local preferences such as reading tool toggles and AI Summary settings |
-
-## Data Sharing
-
-Because ReadScore does not collect your personal data and does not run a backend service, it does not sell, share, or disclose your page content or personal information to third parties.
-
-## Security
-
-ReadScore minimizes data exposure by keeping processing inside the browser whenever possible. Your privacy and security therefore depend primarily on the security of your browser and device.
-
-## Your Control
-
-You can:
-- enable or disable reading tools at any time
-- choose whether to use AI Summary when supported
-- uninstall the extension to remove locally stored preferences
-
-## Changes to This Policy
-
-We may update this policy to reflect product changes, legal requirements, or clarification improvements. The "Last Updated" date above shows the latest revision date.
-
-## Contact
-
-If you have questions about this policy or the ReadScore extension, contact:
-
-**Email:** [heykaan.dev@gmail.com](mailto:heykaan.dev@gmail.com)
+ReadScore is a Chrome extension that makes the page you are viewing easier to read with three modes: **Focus**, **Comfort** and **Calm**. Page processing happens locally in your browser.
 
 ## Summary
 
-ReadScore is built to analyze and improve reading experiences without operating a remote data pipeline. The extension is intended to keep your content on your device while giving you useful analysis, reader tools, and optional browser-supported AI summaries.
+- ReadScore makes no network requests. It has no servers, analytics, advertising, telemetry or tracking code.
+- Nothing ReadScore processes is sent to the developer or to any third party.
+- ReadScore runs on a tab only after you open its popup there.
+- Page text, images, videos, URLs and reading activity are never stored.
+- Only your settings are saved. Chrome may sync them across your signed-in browsers.
 
-<br>
+## What ReadScore processes
 
-<div align="center">
-  <p>Built by <a href="https://heykaan.dev">heykaan.dev</a></p>
-</div>
+**Page content.** When you open ReadScore on a page, its runtime reads the page's structure, text layout, images and video state in that tab to apply the modes you turn on. Focus finds readable paragraphs, Comfort adjusts text styles, and Calm identifies large images and background videos. Images are classified by their element type and size; their pixels are not read. This information stays in the tab's memory and is discarded when the page is reloaded, navigated away from or closed.
+
+**Keys.** With Focus in Keyboard mode, ReadScore listens for `J`, `K` and `Esc` on the page. Other keys are ignored and no keystrokes are recorded.
+
+**Temporary state.** The current Focus paragraph, the paused state and Calm's **Show All Images** state are kept only in the page's memory.
+
+## Where data is kept
+
+| Data | Where | Removed when |
+| --- | --- | --- |
+| Mode settings and theme | `chrome.storage.sync` | ReadScore is uninstalled (**Reset All** restores the defaults) |
+| Popup theme cache | The popup's local storage on this device | ReadScore is uninstalled |
+| Page analysis and temporary state | Memory of the page's ReadScore runtime | The page is reloaded, navigated away from or closed |
+
+Settings include whether each mode is on and the options chosen for it, such as highlight colour, spacing, font, text size and blur strength. They contain no page content.
+
+`chrome.storage.sync` is managed by Chrome. When Chrome sync is turned on, Chrome may synchronize these settings through your Google account to other Chrome browsers where you are signed in, under Google's privacy policy. ReadScore itself does not transmit them or operate a server. When sync is off, they stay in your Chrome profile on this device.
+
+When ReadScore is installed or updated, it deletes any settings left by ReadScore 1.x from `chrome.storage.local`.
+
+## Network and external services
+
+ReadScore does not use cookies, remote code, artificial intelligence services or any other external service. The bundled Atkinson Hyperlegible font is read from the extension package, not downloaded. Chrome itself may handle installation and updates under Google's policies.
+
+## Sharing
+
+ReadScore does not transmit, sell or share any data. The developer never receives it.
+
+ReadScore's use of information received through Chrome APIs adheres to the [Chrome Web Store User Data Policy](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq), including the Limited Use requirements. Data is used only to provide the reading features described here.
+
+## Permissions
+
+| Permission | Purpose |
+| --- | --- |
+| `activeTab` | Temporary access to the current tab after you open the ReadScore popup. |
+| `scripting` | Inject the ReadScore runtime and reading styles into that tab on demand. |
+| `storage` | Save your settings in Chrome's synced extension storage. |
+
+ReadScore requests no host permissions and is not injected into pages automatically. Chrome blocks extensions on its own pages, the Chrome Web Store and other restricted pages.
+
+## Your control
+
+- Modes apply only when you turn them on, and each can be turned off at any time.
+- **Reset All** restores the default settings.
+- Reloading or leaving the page removes all of ReadScore's effects and temporary state from it.
+- Uninstalling ReadScore removes the extension and its storage.
+
+## Changes and contact
+
+Changes to this policy will be published in this file with an updated date. Questions can be sent to [heykaan.dev@gmail.com](mailto:heykaan.dev@gmail.com) or raised on the project's GitHub issue tracker: <https://github.com/kaanddemir/readscore/issues>.

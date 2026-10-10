@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Like heykaan.dev and GitHub: fonts only from the page's own origin (data: and extension URLs blocked). -->
+<meta http-equiv="Content-Security-Policy" content="font-src 'self'">
+<title>Comfort fixture</title>
+<style>
+  body { font: 16px/1.3 Arial, sans-serif; max-width: 720px; margin: 0 auto; padding: 16px; }
+  nav ul { display: flex; gap: 12px; list-style: none; padding: 0; }
+  .tight { line-height: 1.1 !important; }
+</style>
+</head>
+<body>
+<nav><ul><li id="navItem">Home link in navigation</li><li>About</li></ul></nav>
+<main>
+  <h2 id="heading">An article heading</h2>
+  <p id="p1">Reading text paragraph one. It should receive the Comfort spacing and the chosen font when enabled.</p>
+  <p id="pInline" style="line-height: 1 !important; letter-spacing: 0 !important">Paragraph with inline important styles that USER origin must still override.</p>
+  <ul><li id="li1">A list item with enough words to be reading text.</li><li id="liBtn"><a id="btnLink" class="btn btn-sm" href="#">Star</a></li><li id="liLink">A reading item with a <a id="readLink" href="#">plain link</a> inside it.</li></ul>
+  <blockquote id="quote">A quoted passage of reading text.</blockquote>
+  <table><tr><th id="th1">Header cell</th><td id="td1">Table cell text</td></tr></table>
+  <pre id="pre1"><code id="code1">const code = "never spaced";</code></pre>
+  <p>Inline <code id="inlineCode">code</code> inside a paragraph.</p>
+  <form id="form"><input id="input1" value="field"><textarea id="ta1">text area</textarea><button id="btn1" type="submit">Submit</button></form>
+  <div id="editable" contenteditable="true"><p id="editP">Editable paragraph text.</p></div>
+  <div role="toolbar"><p id="toolbarP">Toolbar label</p></div>
+  <svg width="100" height="30"><text id="svgText" x="0" y="20">SVG text</text></svg>
+  <p id="hidden" hidden>Hidden paragraph.</p>
+  <p id="pSmall">Reading text with a <span id="smallSpan" style="font-size: 12px">small span</span>, a <a id="smallLink" href="#" style="font-size: 13px">small link</a>, <small id="fine">fine print</small>, a <span id="badge" class="badge" style="font-size: 11px">NEW</span> badge and an <i id="icon" class="icon" aria-hidden="true" style="font-size: 12px">*</i> icon.</p>
+  <p id="lead" style="font-size: 24px">A lead paragraph that is already larger than any minimum.</p>
+  <div id="host"></div>
+  <script>
+    const sr = document.getElementById('host').attachShadow({ mode: 'open' });
+    sr.innerHTML = '<p id="shadowP">Shadow paragraph text that should read like the rest.</p><button id="shadowBtn">Shadow button</button><div id="inner"></div>';
+    sr.getElementById('inner').attachShadow({ mode: 'open' }).innerHTML = '<p id="nestedP">Nested shadow paragraph text.</p>';
+  </script>
+</main>
+<script>document.getElementById('form').addEventListener('submit', (e) => { e.preventDefault(); document.body.dataset.submitted = '1'; });</script>
+</body>
+</html>
