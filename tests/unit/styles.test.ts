@@ -43,4 +43,9 @@ describe('design tokens', () => {
     // Paper direction: flat surfaces only.
     expect(css).not.toMatch(/box-shadow|gradient\(|backdrop-filter/);
   });
+
+  it('the primary button darkens on hover via --rs-accent-hover, never when disabled', () => {
+    const css = stripComments(sheets['/src/ui/popup/popup.css'] ?? '');
+    expect(css).toMatch(/\.rs-button--primary:hover:not\(:disabled\)\s*\{\s*background:\s*var\(--rs-accent-hover\);\s*\}/);
+  });
 });

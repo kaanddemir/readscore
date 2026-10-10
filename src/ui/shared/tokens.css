@@ -6,13 +6,19 @@
  * Layers
  *   1. Primitives (--rs-p-*): palette and raw scales. Components never use these directly.
  *   2. Semantic   (--rs-*):   meaning based tokens. Themes remap only this layer.
+ *   3. State      (--rs-*):   hover / selected / disabled / switch roles, aliased to semantic tokens,
+ *                             so they follow every theme without being redeclared.
+ *
+ * Palette: monochrome warm "paper" neutrals (light) and cool "ink" neutrals (dark); one accent, the
+ * brand blue of the icon (#2f5bb7). Status hues are functional only. Focus highlight colours are
+ * page paint, not UI, and live in src/shared/focus.ts.
  *
  * Units: rem for type, spacing and control sizes (the popup follows Chrome's font size setting);
  * px only for hairline borders and the focus ring, which must stay crisp at every text size.
  *
  * Contrast (checked by tests/unit/contrast.test.ts, WCAG 2.2 AA):
  *   text, text-muted, accent, danger, warning, success on bg AND surface ≥ 4.5:1
- *   on-accent on accent ≥ 4.5:1;  border-control and focus-ring on bg ≥ 3:1 (SC 1.4.11)
+ *   on-accent on accent and accent-hover ≥ 4.5:1;  border-control and focus-ring on bg ≥ 3:1 (SC 1.4.11)
  */
 :root {
   color-scheme: light;
@@ -22,20 +28,22 @@
   --rs-p-paper-50: #faf8f5;
   --rs-p-paper-100: #f1eee9;
   --rs-p-paper-200: #e2ded7;
+  --rs-p-paper-400: #9a958c;
   --rs-p-paper-500: #857f75;
   --rs-p-paper-600: #5c5850;
-  --rs-p-paper-700: #9a958c;
   --rs-p-ink-50: #ecedee;
   --rs-p-ink-300: #a9adb4;
   --rs-p-ink-400: #7a7e86;
   --rs-p-ink-500: #5f636b;
   --rs-p-ink-700: #2e3034;
   --rs-p-ink-800: #1c1d20;
+  --rs-p-ink-850: #1b1c1e;
   --rs-p-ink-900: #141517;
   --rs-p-ink-950: #0f1012;
-  --rs-p-ink-text: #1b1c1e;
+  --rs-p-blue-200: #a8c2ff;
   --rs-p-blue-300: #8eb0ff;
   --rs-p-blue-600: #2f5bb7;
+  --rs-p-blue-700: #264a96;
   --rs-p-red-300: #ff9b93;
   --rs-p-red-700: #b3261e;
   --rs-p-amber-300: #f2c14e;
@@ -49,16 +57,28 @@
   --rs-surface-sunken: var(--rs-p-paper-100);
   --rs-border: var(--rs-p-paper-200);
   --rs-border-control: var(--rs-p-paper-500);
-  --rs-text: var(--rs-p-ink-text);
+  --rs-text: var(--rs-p-ink-850);
   --rs-text-muted: var(--rs-p-paper-600);
-  --rs-text-disabled: var(--rs-p-paper-700);
+  --rs-text-disabled: var(--rs-p-paper-400);
   --rs-accent: var(--rs-p-blue-600);
+  --rs-accent-hover: var(--rs-p-blue-700);
   --rs-on-accent: var(--rs-p-paper-0);
   --rs-focus-ring: var(--rs-p-blue-600);
   --rs-danger: var(--rs-p-red-700);
   --rs-warning: var(--rs-p-amber-800);
   --rs-success: var(--rs-p-green-700);
   --rs-info: var(--rs-p-blue-600);
+
+  /* ───── 3. State (aliases; never redeclared per theme) ───── */
+  --rs-hover-bg: var(--rs-surface-sunken);
+  --rs-selected-bg: var(--rs-surface);
+  --rs-selected-border: var(--rs-border-control);
+  --rs-disabled-text: var(--rs-text-disabled);
+  --rs-disabled-bg: var(--rs-bg);
+  --rs-track: var(--rs-surface-sunken);
+  --rs-track-on: var(--rs-accent);
+  --rs-thumb: var(--rs-border-control);
+  --rs-thumb-on: var(--rs-on-accent);
 
   /* ───── Typography (system UI; scale 12 / 14 / 16 / 20) ───── */
   --rs-font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
@@ -124,6 +144,7 @@
     --rs-text-disabled: var(--rs-p-ink-500);
     --rs-accent: var(--rs-p-blue-300);
     --rs-on-accent: var(--rs-p-ink-950);
+    --rs-accent-hover: var(--rs-p-blue-200);
     --rs-focus-ring: var(--rs-p-blue-300);
     --rs-danger: var(--rs-p-red-300);
     --rs-warning: var(--rs-p-amber-300);
@@ -143,6 +164,7 @@
   --rs-text-disabled: var(--rs-p-ink-500);
   --rs-accent: var(--rs-p-blue-300);
   --rs-on-accent: var(--rs-p-ink-950);
+  --rs-accent-hover: var(--rs-p-blue-200);
   --rs-focus-ring: var(--rs-p-blue-300);
   --rs-danger: var(--rs-p-red-300);
   --rs-warning: var(--rs-p-amber-300);

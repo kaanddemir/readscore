@@ -1,6 +1,6 @@
 # ReadScore Privacy Policy
 
-Last updated: October 10, 2026 · Applies to ReadScore 2.0.0
+Last updated: October 10, 2026
 
 ReadScore is a Chrome extension that makes the page you are viewing easier to read with three modes: **Focus**, **Comfort** and **Calm**. Page processing happens locally in your browser.
 

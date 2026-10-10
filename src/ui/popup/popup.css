@@ -237,9 +237,9 @@ select {
   width: var(--rs-switch-w);
   height: var(--rs-switch-h);
   padding: 0;
-  border: var(--rs-border-width) solid var(--rs-border-control);
+  border: var(--rs-border-width) solid var(--rs-thumb);
   border-radius: var(--rs-radius-full);
-  background: var(--rs-surface-sunken);
+  background: var(--rs-track);
   cursor: pointer;
   transition: background-color var(--rs-duration-fast) var(--rs-ease), border-color var(--rs-duration-fast) var(--rs-ease);
 }
@@ -253,8 +253,8 @@ select {
   width: var(--rs-switch-thumb);
   height: var(--rs-switch-thumb);
   border-radius: var(--rs-radius-full);
-  background: var(--rs-border-control);
-  color: var(--rs-accent);
+  background: var(--rs-thumb);
+  color: var(--rs-track-on);
   transition: transform var(--rs-duration-fast) var(--rs-ease);
 }
 
@@ -266,12 +266,12 @@ select {
 }
 
 .rs-switch[aria-checked='true'] {
-  border-color: var(--rs-accent);
-  background: var(--rs-accent);
+  border-color: var(--rs-track-on);
+  background: var(--rs-track-on);
 }
 
 .rs-switch[aria-checked='true'] .rs-switch__thumb {
-  background: var(--rs-on-accent);
+  background: var(--rs-thumb-on);
   transform: translateX(calc(var(--rs-switch-w) - var(--rs-switch-h)));
 }
 
@@ -280,13 +280,13 @@ select {
 }
 
 .rs-switch:disabled {
-  border-color: var(--rs-text-disabled);
-  background: var(--rs-bg);
+  border-color: var(--rs-disabled-text);
+  background: var(--rs-disabled-bg);
   cursor: not-allowed;
 }
 
 .rs-switch:disabled .rs-switch__thumb {
-  background: var(--rs-text-disabled);
+  background: var(--rs-disabled-text);
 }
 
 /* ───────────────────────── Buttons ───────────────────────── */
@@ -312,13 +312,17 @@ select {
   color: var(--rs-on-accent);
 }
 
+.rs-button--primary:hover:not(:disabled) {
+  background: var(--rs-accent-hover);
+}
+
 .rs-button--secondary {
   border-color: var(--rs-border-control);
   background: var(--rs-surface);
 }
 
 .rs-button--secondary:hover:not(:disabled) {
-  background: var(--rs-surface-sunken);
+  background: var(--rs-hover-bg);
 }
 
 .rs-button--quiet {
@@ -333,7 +337,7 @@ select {
 .rs-button:disabled {
   border-color: transparent;
   background: transparent;
-  color: var(--rs-text-disabled);
+  color: var(--rs-disabled-text);
   cursor: not-allowed;
 }
 
@@ -361,7 +365,7 @@ select {
 }
 
 .rs-icon-button:hover {
-  background: var(--rs-surface-sunken);
+  background: var(--rs-hover-bg);
   color: var(--rs-text);
 }
 
@@ -452,8 +456,8 @@ select {
 }
 
 .rs-segmented__input:checked + .rs-segmented__label {
-  border-color: var(--rs-border-control);
-  background: var(--rs-surface);
+  border-color: var(--rs-selected-border);
+  background: var(--rs-selected-bg);
   color: var(--rs-text);
   font-weight: var(--rs-weight-medium);
 }
@@ -464,7 +468,7 @@ select {
 }
 
 .rs-segmented:disabled .rs-segmented__label {
-  color: var(--rs-text-disabled);
+  color: var(--rs-disabled-text);
 }
 
 /* Select */
@@ -515,7 +519,7 @@ select {
 
 .rs-check--disabled .rs-check__label,
 .rs-check--disabled .rs-help {
-  color: var(--rs-text-disabled);
+  color: var(--rs-disabled-text);
   cursor: not-allowed;
 }
 

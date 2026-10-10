@@ -36,6 +36,8 @@ describe.each([['light', light], ['dark', dark]] as const)('%s theme contrast', 
   for (const fg of TEXT) for (const bg of SURFACES) it(`${fg} on ${bg} ≥ 4.5:1 (text)`, () => expect(ratio(resolve(theme, fg), resolve(theme, bg))).toBeGreaterThanOrEqual(4.5));
   for (const fg of NON_TEXT) it(`${fg} on --rs-bg ≥ 3:1 (UI component, SC 1.4.11)`, () => expect(ratio(resolve(theme, fg), resolve(theme, '--rs-bg'))).toBeGreaterThanOrEqual(3));
   it('--rs-on-accent on --rs-accent ≥ 4.5:1', () => expect(ratio(resolve(theme, '--rs-on-accent'), resolve(theme, '--rs-accent'))).toBeGreaterThanOrEqual(4.5));
+  it('--rs-on-accent on --rs-accent-hover ≥ 4.5:1 (primary button hover)', () => expect(ratio(resolve(theme, '--rs-on-accent'), resolve(theme, '--rs-accent-hover'))).toBeGreaterThanOrEqual(4.5));
+  it('--rs-accent-hover differs from --rs-accent', () => expect(resolve(theme, '--rs-accent-hover')).not.toBe(resolve(theme, '--rs-accent')));
   it('switch thumb (--rs-border-control) on --rs-surface-sunken ≥ 3:1', () => expect(ratio(resolve(theme, '--rs-border-control'), resolve(theme, '--rs-surface-sunken'))).toBeGreaterThanOrEqual(3));
 });
 
